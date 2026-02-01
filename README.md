@@ -2,15 +2,33 @@
 
 ## Overview
 
-Sandfly is an agentless intrusion detection and incident response platform for Linux. Sandfly automatically analyzes Linux hosts for intruders 24 hours a day without loading any software on endpoints. Analysis is performed remotely by the Sandfly platform and does not require agents or software to be installed on monitored systems.
+Sandfly Security is an agentless intrusion detection and incident response platform for Linux. 
 
-Sandfly retrieves security, hardware, operating system, and related system data from Linux hosts and makes this data available for analysis. Sandfly operates across virtually all Linux distributions immediately and is designed to function without introducing risk to system stability or performance.
+## Supporting Operating Systems
+
+
+
+
+Sandfly Security automatically analyzes Linux hosts for intruders 24 hours a day without loading any software on endpoints. 
+
+Sandfly Security retrieves security, hardware, operating system, and related system data from Linux hosts and makes this data available for analysis. Sandfly operates across virtually all Linux distributions immediately and is designed to function without introducing risk to system stability or performance.
 
 The Sandfly Security for Splunk App is a single Splunk application that ingests events from a Sandfly Security server using the Sandfly Security REST API. The app ingests data into a user-specified Splunk index and assigns the correct sourcetype to each event. All events are ingested in JSON format to preserve the original structure and content of the Sandfly data.
 
-The app provides dashboards, reports, and search logic for analyzing data ingested from a Sandfly Security server. This includes Sandfly security alarms, suspicious activity results, SSH Hunter data, host inventory, and Sandfly server audit and error logs. Data retrieved by Sandfly can also be used by Splunk users to build searches, reports, anomaly detection models, and incident response workflows within Splunk.
+The Splunk app provides dashboards, reports, and search logic for analyzing data ingested from a Sandfly Security server. 
 
-The Splunk App is intended to surface Sandfly data directly inside Splunk so that users can analyze and operationalize Sandfly results without relying on the Sandfly user interface.
+This includes Sandfly Security alarms, suspicious activity results, SSH Hunter data, host inventory, and Sandfly server audit and error logs. 
+
+Data retrieved by Sandfly Securitu can also be used by Splunk users to build searches, reports, anomaly detection models, and incident response workflows within Splunk.
+
+The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
+
+⚠️ Disclaimer
+
+These tools are not official Sandfly Security products or utilities
+
+Use of this software is not covered by any license, warranty, or support agreement you may have with Sandfly
+Security.
 
 ---
 
