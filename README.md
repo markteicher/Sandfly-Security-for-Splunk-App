@@ -91,16 +91,76 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 | SUSE Linux Enterprise | 11 SP1+ | ≥ 2.6.32 | ✅ |
 | SUSE Linux Enterprise | 12 | 3.12 | ✅ |
 | SUSE Linux Enterprise | 15 | 4.12+ | ✅ |
-| Arch Linux | Rolling (kernel ≥ 2.6.32) | Rolling | ✅ |
-| Gentoo | Rolling (kernel ≥ 2.6.32) | Rolling | ✅ |
 
-### Cloud & Virtualization Platforms (Kernel ≥ 2.6.32)
 
-| Platform | Supported |
-|---------|-----------|
-| Amazon Linux | ✅ |
-| DigitalOcean Linux images | ✅ |
-| Microsoft Azure Linux images | ✅ |
+---
+### Supported Linux Distribution Builds  
+**Minimum requirement: Linux kernel 2.6.32 or newer**
+
+---
+
+#### Arch Linux
+
+| Distribution | Release / Snapshot | Typical Kernel Version | Supported |
+|-------------|--------------------|------------------------|-----------|
+| Arch Linux | 2010–2011 snapshots | 2.6.32–2.6.38 | ✅ |
+| Arch Linux | 2012–2014 snapshots | 3.x | ✅ |
+| Arch Linux | 2015–2018 snapshots | 4.x | ✅ |
+| Arch Linux | 2019–2022 snapshots | 5.x | ✅ |
+| Arch Linux | 2023–present snapshots | 6.x | ✅ |
+
+---
+
+#### Gentoo Linux
+
+| Distribution | Profile / Era | Typical Kernel Version | Supported |
+|-------------|---------------|------------------------|-----------|
+| Gentoo | Legacy profiles (2010–2011) | 2.6.32–2.6.39 | ✅ |
+| Gentoo | Stable profiles (2012–2015) | 3.x | ✅ |
+| Gentoo | Stable profiles (2016–2019) | 4.x | ✅ |
+| Gentoo | Stable profiles (2020–2022) | 5.x | ✅ |
+| Gentoo | Current stable/testing | 6.x | ✅ |
+
+Support applies regardless of userland profile, USE flags, or package selection, provided the running kernel meets the minimum requirement and SSH access is available.
+
+---
+
+### Cloud & Virtualization Platforms  
+**Linux images only — minimum kernel requirement: 2.6.32 or newer**
+
+#### Amazon Web Services (AWS)
+
+| Platform | Image / Release | Kernel Version | Supported |
+|---------|-----------------|----------------|-----------|
+| Amazon Linux | Amazon Linux 1 | 4.14 | ✅ |
+| Amazon Linux | Amazon Linux 2 | 4.14 / 5.10 | ✅ |
+| Amazon Linux | Amazon Linux 2023 | 6.1 | ✅ |
+| AWS | Custom Linux AMIs | ≥ 2.6.32 | ✅ |
+
+---
+
+#### DigitalOcean
+
+| Platform | Image Type | Kernel Version | Supported |
+|---------|------------|----------------|-----------|
+| DigitalOcean | Ubuntu images | 3.x–6.x | ✅ |
+| DigitalOcean | Debian images | 3.x–6.x | ✅ |
+| DigitalOcean | Fedora images | 3.x–6.x | ✅ |
+| DigitalOcean | Custom droplets | ≥ 2.6.32 | ✅ |
+
+---
+
+#### Microsoft Azure
+
+| Platform | Image Type | Kernel Version | Supported |
+|---------|------------|----------------|-----------|
+| Azure | Ubuntu marketplace images | 3.x–6.x | ✅ |
+| Azure | RHEL marketplace images | 3.x–5.x | ✅ |
+| Azure | Debian marketplace images | 3.x–6.x | ✅ |
+| Azure | Custom Linux images | ≥ 2.6.32 | ✅ |
+
+
+---
 
 ### Network & Embedded Devices
 
