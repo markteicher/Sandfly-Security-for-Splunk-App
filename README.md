@@ -18,6 +18,12 @@ Data retrieved by Sandfly Securitu can also be used by Splunk users to build sea
 
 The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
 
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Status](https://img.shields.io/badge/status-active%20development-yellow.svg)
+
+
+
 ---
 ⚠️ Disclaimer
 
