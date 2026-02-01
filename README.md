@@ -591,15 +591,24 @@ Sandfly_Security_For_Splunk_App/
 │           └── views/
 │               ├── setup.xml
 │               ├── sandfly_overview.xml
+│               ├── sandfly_results.xml
 │               ├── sandfly_hosts.xml
 │               ├── sandfly_sandflies.xml
-│               ├── sandfly_results.xml
 │               ├── sandfly_sshhunter.xml
 │               ├── sandfly_scans.xml
 │               ├── sandfly_schedules.xml
 │               ├── sandfly_notifications.xml
 │               ├── sandfly_reports.xml
-│               └── sandfly_audit.xml
+│               ├── sandfly_audit.xml
+│               ├── sandfly_drift_detection.xml
+│               ├── sandfly_ai_analysis.xml
+│               ├── sandfly_jumphosts.xml
+│               ├── sandfly_credentials.xml
+│               ├── sandfly_whitelists.xml
+│               ├── sandfly_settings.xml
+│               ├── sandfly_operations.xml
+│               ├── sandfly_logging.xml
+│               └── sandfly_help.xml
 ├── bin/
 │   ├── sandfly_input.py
 │   ├── sandfly_setup_handler.py
