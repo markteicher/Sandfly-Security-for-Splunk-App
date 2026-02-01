@@ -564,6 +564,8 @@ Run the following search to confirm data ingestion:
 
 ## Directory Structure
 
+Directory Structure
+
 Sandfly_Security_For_Splunk_App/
 ├── app.manifest
 ├── README.md
@@ -579,22 +581,22 @@ Sandfly_Security_For_Splunk_App/
 │   ├── savedsearches.conf
 │   ├── restmap.conf
 │   ├── authorize.conf
-│   ├── data/
-│   │   └── ui/
-│   │       ├── nav/
-│   │       │   └── default.xml
-│   │       └── views/
-│   │           ├── setup.xml
-│   │           ├── overview.xml
-│   │           ├── hosts.xml
-│   │           ├── sandflies.xml
-│   │           ├── results.xml
-│   │           ├── sshhunter.xml
-│   │           ├── scans.xml
-│   │           ├── schedules.xml
-│   │           ├── notifications.xml
-│   │           ├── reports.xml
-│   │           └── audit.xml
+│   └── data/
+│       └── ui/
+│           ├── nav/
+│           │   └── default.xml
+│           └── views/
+│               ├── setup.xml
+│               ├── overview.xml
+│               ├── hosts.xml
+│               ├── sandflies.xml
+│               ├── results.xml
+│               ├── sshhunter.xml
+│               ├── scans.xml
+│               ├── schedules.xml
+│               ├── notifications.xml
+│               ├── reports.xml
+│               └── audit.xml
 │
 ├── bin/
 │   ├── sandfly_input.py
@@ -610,7 +612,8 @@ Sandfly_Security_For_Splunk_App/
 └── static/
     ├── appIcon.png
     ├── appIcon_2x.png
-    └── screenshots/
+    ├── launcherIcon.png
+    └── launcherIcon_2x.png
 
 ---
 
