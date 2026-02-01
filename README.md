@@ -20,7 +20,39 @@ The Splunk App is intended to surface Sandfly data directly inside Splunk so tha
 
 ## Supporting Operating Systems
 
+## Linux Distributions
 
+| Distribution |
+|-------------|
+| Red Hat Enterprise Linux (RHEL) |
+| AlmaLinux |
+| Rocky Linux |
+| CentOS |
+| CentOS Stream |
+| Ubuntu |
+| Debian |
+| Fedora |
+| SUSE |
+| Arch Linux |
+| Gentoo |
+
+## Cloud & Virtualization Platforms
+
+| Platform |
+|---------|
+| Amazon Linux |
+| DigitalOcean Linux images |
+| Microsoft Azure Linux images |
+
+## Network & Embedded Devices
+
+| Platform | Description |
+|---------|-------------|
+| Cisco network devices | Linux-based operating systems on Cisco network platforms |
+| Juniper network devices | Linux-based operating systems on Juniper network platforms |
+| Embedded Linux systems | Embedded and appliance-based Linux systems (e.g., Raspberry Pi) |
+
+---
 ⚠️ Disclaimer
 
 These tools are not official Sandfly Security products or utilities
