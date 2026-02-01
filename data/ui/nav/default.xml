@@ -1,4 +1,117 @@
-data/
-│       └── ui/
-│           ├── nav/
-│           │   └── default.xml
+<!--
+  -------------------------------------------------------------------------
+  Sandfly Security for Splunk App
+  Navigation Definition (Classic XML)
+
+  This navigation mirrors the Sandfly Security UI main menu and operational
+  areas, based on official Sandfly documentation.
+
+  References:
+  - https://docs.sandflysecurity.com/docs/user-interface-overview
+
+  This file defines navigation only.
+  -------------------------------------------------------------------------
+-->
+
+<nav search_view="sandfly_overview" color="#2c3e50">
+
+  <!-- Dashboard -->
+  <collection label="Dashboard">
+    <view name="sandfly_overview"/>
+  </collection>
+
+  <!-- Results -->
+  <collection label="Results">
+    <view name="sandfly_results"/>
+  </collection>
+
+  <!-- Hosts -->
+  <collection label="Hosts">
+    <view name="sandfly_hosts"/>
+  </collection>
+
+  <!-- Drift Detection -->
+  <collection label="Drift Detection">
+    <view name="sandfly_drift_profiles"/>
+    <view name="sandfly_whitelists"/>
+  </collection>
+
+  <!-- SSH Hunter -->
+  <collection label="SSH Hunter">
+    <view name="sandfly_sshhunter"/>
+  </collection>
+
+  <!-- AI Analysis -->
+  <collection label="AI Analysis">
+    <view name="sandfly_ai_analysis"/>
+  </collection>
+
+  <!-- Reports -->
+  <collection label="Reports">
+    <view name="sandfly_reports"/>
+  </collection>
+
+  <!-- Scanning -->
+  <collection label="Scanning">
+    <view name="sandfly_scans"/>
+    <view name="sandfly_scan_queue"/>
+    <view name="sandfly_scan_errors"/>
+  </collection>
+
+  <!-- Schedules -->
+  <collection label="Schedules">
+    <view name="sandfly_schedules"/>
+  </collection>
+
+  <!-- Notifications -->
+  <collection label="Notifications">
+    <view name="sandfly_notifications"/>
+  </collection>
+
+  <!-- Jump Hosts -->
+  <collection label="Jump Hosts">
+    <view name="sandfly_jumphosts"/>
+  </collection>
+
+  <!-- Credentials -->
+  <collection label="Credentials">
+    <view name="sandfly_credentials"/>
+  </collection>
+
+  <!-- Sandflies -->
+  <collection label="Sandflies">
+    <view name="sandfly_sandflies"/>
+  </collection>
+
+  <!-- Whitelists -->
+  <collection label="Whitelists">
+    <view name="sandfly_whitelists"/>
+  </collection>
+
+  <!-- Operations -->
+  <collection label="Operations">
+    <view name="sandfly_task_queue"/>
+    <view name="sandfly_system_health"/>
+  </collection>
+
+  <!-- Logging -->
+  <collection label="Logging">
+    <view name="sandfly_audit_logs"/>
+    <view name="sandfly_error_logs"/>
+  </collection>
+
+  <!-- Settings -->
+  <collection label="Settings">
+    <view name="sandfly_users"/>
+    <view name="sandfly_licensing"/>
+    <view name="sandfly_server_config"/>
+  </collection>
+
+  <!-- Help -->
+  <collection label="Help">
+    <view name="sandfly_help"/>
+    <view name="sandfly_documentation"/>
+    <view name="sandfly_about"/>
+  </collection>
+
+</nav>
