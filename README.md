@@ -564,57 +564,44 @@ Run the following search to confirm data ingestion:
 
 ## Directory Structure
 
-Directory Structure
 
 Sandfly_Security_For_Splunk_App/
 ├── app.manifest
-├── README.md
 ├── LICENSE
-│
+├── README.md
 ├── default/
 │   ├── app.conf
-│   ├── web.conf
 │   ├── inputs.conf
 │   ├── props.conf
 │   ├── transforms.conf
 │   ├── macros.conf
-│   ├── savedsearches.conf
 │   ├── restmap.conf
-│   ├── authorize.conf
-│   └── data/
-│       └── ui/
-│           ├── nav/
-│           │   └── default.xml
-│           └── views/
-│               ├── setup.xml
-│               ├── overview.xml
-│               ├── hosts.xml
-│               ├── sandflies.xml
-│               ├── results.xml
-│               ├── sshhunter.xml
-│               ├── scans.xml
-│               ├── schedules.xml
-│               ├── notifications.xml
-│               ├── reports.xml
-│               └── audit.xml
-│
+│   ├── savedsearches.conf
+│   ├── web.conf
+│   └── data/ui/
+│       ├── nav/default.xml
+│       └── views/
+│           ├── setup.xml
+│           ├── sandfly_overview.xml
+│           ├── sandfly_hosts.xml
+│           ├── sandfly_sandflies.xml
+│           ├── sandfly_results.xml
+│           ├── sandfly_sshhunter.xml
+│           ├── sandfly_scans.xml
+│           ├── sandfly_schedules.xml
+│           ├── sandfly_notifications.xml
+│           ├── sandfly_reports.xml
+│           └── sandfly_audit.xml
 ├── bin/
 │   ├── sandfly_input.py
-│   ├── sandfly_api.py
 │   ├── sandfly_setup_handler.py
-│   ├── sandfly_validation.py
-│   └── __init__.py
-│
+│   └── sandfly_validation.py
 ├── metadata/
 │   ├── default.meta
 │   └── local.meta
-│
 └── static/
     ├── appIcon.png
-    ├── appIcon_2x.png
-    ├── launcherIcon.png
-    └── launcherIcon_2x.png
-
+    └── appIcon_2x.png
 ---
 
 ## Requirements
