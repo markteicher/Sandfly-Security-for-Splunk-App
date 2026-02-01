@@ -18,6 +18,13 @@ Data retrieved by Sandfly Securitu can also be used by Splunk users to build sea
 
 The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
 
+---
+⚠️ Disclaimer
+
+These tools are not official Sandfly Security products or utilities
+
+Use of this software is not covered by any license, warranty, or support agreement you may have with Sandfly
+Security.
 
 ---
 ## Supporting Operating Systems
@@ -322,15 +329,151 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 
 
 ---
-⚠️ Disclaimer
 
-These tools are not official Sandfly Security products or utilities
-
-Use of this software is not covered by any license, warranty, or support agreement you may have with Sandfly
-Security.
 
 ---
 
+### API Endpoint Role Security Matrix
+
+| Method | Path | ROLE: system | ROLE: admin | ROLE: user | ROLE: api_result_read | ROLE: api_scan |
+|--------|------|--------------|-------------|------------|-----------------------|----------------|
+| GET | /auth | Y | Y | Y | Y | Y |
+| GET | /version | Y | Y | Y | Y | Y |
+| GET | /license | Y | Y | Y | Y | Y |
+| POST | /license | Y | Y | | | |
+| PUT | /license | Y | Y | | | |
+| DELETE | /license | Y | Y | | | |
+| POST | /license/refresh | Y | | | | |
+| GET | /alerts/email | Y | Y | | | |
+| GET | /alerts/email/:id | Y | Y | | | |
+| POST | /alerts/email | Y | | | | |
+| PUT | /alerts/email/:id | Y | | | | |
+| DELETE | /alerts/email/:id | Y | | | | |
+| POST | /alerts/email/test/:id | Y | | | | |
+| GET | /alerts/syslog | Y | Y | | | |
+| GET | /alerts/syslog/:id | Y | Y | | | |
+| PUT | /alerts/syslog/:id | Y | | | | |
+| POST | /alerts/syslog | Y | | | | |
+| DELETE | /alerts/syslog/:id | Y | | | | |
+| GET | /audit | Y | Y | | | |
+| DELETE | /audit | Y | | | | |
+| GET | /config | Y | | | | |
+| PUT | /config | Y | | | | |
+| GET | /credentials | Y | Y | Y | Y | |
+| GET | /credentials/:id | Y | Y | Y | Y | |
+| POST | /credentials/:id | Y | Y | | | |
+| PUT | /credentials/:id | Y | Y | | | |
+| DELETE | /credentials | Y | Y | | | |
+| DELETE | /credentials/:id | Y | Y | | | |
+| GET | /hosts | Y | Y | Y | Y | |
+| GET | /hosts/:id | Y | Y | Y | Y | |
+| POST | /hosts | Y | Y | | | |
+| POST | /hosts/retry | Y | Y | | | |
+| PUT | /hosts/:id | Y | Y | | | |
+| DELETE | /hosts | Y | Y | | | |
+| DELETE | /hosts/:id | Y | Y | | | |
+| PUT | /hosts/tags | Y | Y | | | |
+| GET | /hosts/:id/info/kernelmodules | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/lastlog | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/listeners | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/loggedinusers | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/processes | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/scheduledtasks | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/services | Y | Y | Y | Y | |
+| GET | /hosts/:id/info/users | Y | Y | Y | Y | |
+| GET | /hostsrollup/:id | Y | Y | Y | Y | |
+| GET | /jumphosts | Y | Y | Y | Y | |
+| GET | /jumphosts/:id | Y | Y | Y | Y | |
+| POST | /jumphosts/:id | Y | Y | | | |
+| PUT | /jumphosts/:id | Y | Y | | | |
+| DELETE | /jumphosts | Y | Y | | | |
+| DELETE | /jumphosts/:id | Y | Y | | | |
+| GET | /llmanalysis | Y | Y | | | |
+| GET | /llmanalysis/:id | Y | Y | | | |
+| POST | /llmanalysis | Y | Y | | | |
+| PUT | /llmanalysis/:id/chat | Y | Y | | | |
+| GET | /llmanalysis/:id/wait | Y | Y | | | |
+| DELETE | /llmanalysis/:id | Y | Y | | | |
+| POST | /llmanalysis/bulkdelete | Y | Y | | | |
+| GET | /notifications | Y | Y | | | |
+| GET | /notifications/:id | Y | | | | |
+| POST | /notifications | Y | | | | |
+| PUT | /notifications/:id | Y | | | | |
+| DELETE | /notifications/:id | Y | | | | |
+| PUT | /notifications/pause/:id | Y | | | | |
+| PUT | /notifications/unpause/:id | Y | | | | |
+| POST | /notifications/test/:id | Y | | | | |
+| GET | /reports/host_snapshot | Y | Y | | | |
+| GET | /reports/scan_performance | Y | Y | | | |
+| GET | /results/:id | Y | Y | Y | | |
+| POST | /results | Y | Y | Y | | |
+| POST | /results/timeline | Y | Y | Y | | |
+| DELETE | /results/:id | Y | Y | | | |
+| DELETE | /results | Y | Y | | | |
+| DELETE | /results/all | Y | Y | | | |
+| GET | /results/getMaxID | Y | Y | Y | | |
+| POST | /results/delete/hostsandflies | Y | Y | | | |
+| POST | /results/delete/sandflyhosts | Y | Y | | | |
+| GET | /resultprofiles | Y | Y | | | |
+| GET | /resultprofiles/:id | Y | Y | | | |
+| GET | /resultprofiles/:id/sandfly/:sandfly | Y | Y | | | |
+| DELETE | /resultprofiles/:id/sandfly/:sandfly | Y | Y | | | |
+| DELETE | /resultprofiles/:id/sandfly/:sandfly/:hash | Y | Y | | | |
+| POST | /resultprofiles/:id/sandfly/:sandfly/deleteresults | Y | Y | | | |
+| PUT | /resultprofiles/:id | Y | Y | | | |
+| GET | /resultprofiles/host/:hostid | Y | Y | | | |
+| DELETE | /resultprofiles/:id | Y | Y | | | |
+| POST | /resultprofilesDelete | Y | Y | | | |
+| POST | /resultprofiles | Y | Y | | | |
+| POST | /resultprofiles/:id/append | Y | Y | | | |
+| POST | /resultprofiles/:id/deletesandflies | Y | Y | | | |
+| DELETE | /resultprofiles/autodrift/:id/gather | Y | Y | | | |
+| DELETE | /resultprofiles/autodrift/:id/schedule | Y | Y | | | |
+| PUT | /resultprofiles/autodrift/:id/restartgather | Y | Y | | | |
+| PUT | /resultprofiles/autodrift/:id/enforce | Y | Y | | | |
+| PUT | /resultprofiles/autodrift/:id | Y | Y | | | |
+| GET | /resultssummary/host/:hostid | Y | Y | Y | | |
+| GET | /resultsummary/sandfly/:sandfly | Y | Y | Y | | |
+| GET | /sandflies | Y | Y | Y | Y | |
+| GET | /sandflies/name/:id | Y | Y | Y | Y | |
+| PUT | /sandflies/name/:id/activate | Y | Y | | | |
+| PUT | /sandflies/name/:id/deactivate | Y | Y | | | |
+| PUT | /sandflies/activate | Y | Y | | | |
+| PUT | /sandflies/deactivate | Y | Y | | | |
+| POST | /sandflies | Y | Y | | | |
+| PUT | /sandflies | Y | Y | | | |
+| PUT | /sandflies/response/:id | Y | Y | | | |
+| DELETE | /sandflies/name/:id | Y | Y | | | |
+| DELETE | /sandflies/name | Y | Y | | | |
+| GET | /sandflies/backup | Y | Y | | | |
+| POST | /sandflies/reload_all | Y | Y | | | |
+| GET | /savedviews | Y | Y | | | |
+| GET | /savedviews/:namespace | Y | Y | | | |
+| DELETE | /savedviews/:namespace/:name | Y | Y | | | |
+| POST | /savedviews | Y | Y | | | |
+| POST | /scan | Y | Y | Y | Y | Y |
+| POST | /scan/adhoc | Y | Y | Y | Y | Y |
+| GET | /schedule | Y | Y | | | |
+| GET | /schedule/:id | Y | Y | | | |
+| POST | /schedule | Y | Y | | | |
+| PUT | /schedule/:id | Y | Y | | | |
+| PUT | /schedule/:id/abort | Y | Y | | | |
+| PUT | /schedule/pause/:id | Y | Y | | | |
+| PUT | /schedule/unpause/:id | Y | Y | | | |
+| POST | /schedule/run/:id | Y | Y | | | |
+| DELETE | /schedule | Y | Y | | | |
+| DELETE | /schedule/:id | Y | Y | | | |
+| POST | /sharedurl | Y | Y | | | |
+| GET | /sshhunter/summary | Y | Y | Y | Y | |
+| GET | /sshhunter/minisummary | Y | Y | Y | Y | |
+| GET | /sshhunter/key/:id | Y | Y | Y | Y | |
+| PUT | /sshhunter/key/:id/tags | Y | Y | Y | | |
+| PUT | /sshhunter/key/tags | Y | Y | Y | | |
+| GET | /sshhunter/users | Y | Y | Y | Y | |
+| GET | /sshhunter/users/:username | Y | Y | Y | Y | |
+| GET | /sshhunter/hosts | Y | Y | Y | Y | |
+...
+---
 ## Features
 
 ### 🛡️ Core Capabilities
