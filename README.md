@@ -564,13 +564,10 @@ Run the following search to confirm data ingestion:
 
 ## Directory Structure
 
-## Directory Structure
-
 Sandfly_Security_For_Splunk_App/
   app.manifest
   LICENSE
   README.md
-
   default/
     app.conf
     inputs.conf
@@ -580,7 +577,6 @@ Sandfly_Security_For_Splunk_App/
     restmap.conf
     savedsearches.conf
     web.conf
-
     data/
       ui/
         nav/
@@ -597,16 +593,13 @@ Sandfly_Security_For_Splunk_App/
           sandfly_notifications.xml
           sandfly_reports.xml
           sandfly_audit.xml
-
   bin/
     sandfly_input.py
     sandfly_setup_handler.py
     sandfly_validation.py
-
   metadata/
     default.meta
     local.meta
-
   static/
     appIcon.png
     appIcon_2x.png
