@@ -319,20 +319,6 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 
 ---
 
-#### Embedded & Appliance Systems
-
-| System Type | Description | Supported |
-|------------|-------------|-----------|
-| Embedded appliances | Purpose-built Linux appliances (network, security, OT devices) | ✅ |
-| Custom embedded systems | Vendor-customized Linux systems | ✅ |
-| Industrial / OT Linux | Embedded Linux in industrial environments | ✅ |
-
-
----
-
-
----
-
 ### API Endpoint Role Security Matrix
 
 | Method | Path | ROLE: system | ROLE: admin | ROLE: user | ROLE: api_result_read | ROLE: api_scan |
@@ -472,7 +458,6 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | GET | /sshhunter/users | Y | Y | Y | Y | |
 | GET | /sshhunter/users/:username | Y | Y | Y | Y | |
 | GET | /sshhunter/hosts | Y | Y | Y | Y | |
-...
 ---
 ## Features
 
