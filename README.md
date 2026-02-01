@@ -68,6 +68,65 @@ Sandfly supports a broad range of Linux-based operating systems and platforms.
 
 ### Network & Embedded Devices
 
+### Cisco Network Operating System Support Matrix (Kernel-Based)
+
+Support is determined by whether the platform runs a Linux-based OS meeting the minimum kernel requirement (≥ 2.6.32).
+
+---
+
+## Cisco Nexus NX-OS
+
+### Supported NX-OS Platforms
+
+| NX-OS Release Train | Linux Kernel Basis | Supported Nexus Families | Supported |
+|--------------------|-------------------|--------------------------|-----------|
+| 9.3(x) | Linux 3.10 | Nexus 3000, Nexus 9000 | ✅ |
+| 10.2(x) | Linux 3.10 | Nexus 9000 | ✅ |
+| 10.3(x) | Linux 3.10 | Nexus 9000 | ✅ |
+| 10.4(x) | Linux 3.10 | Nexus 9000 | ✅ |
+| 10.5(x) | Linux 3.10 | Nexus 3500, Nexus 3600, Nexus 9000 | ✅ |
+| 10.6(x) | Linux 3.10 | Nexus 9000 | ✅ |
+
+### Not Supported NX-OS Platforms
+
+| NX-OS Release Train | Linux Kernel Basis | Nexus Families | Supported | Reason |
+|--------------------|-------------------|----------------|-----------|--------|
+| 4.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
+| 5.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
+| 6.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
+| 7.x (early) | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
+
+---
+
+## Cisco IOS XR
+
+### Supported IOS XR Platforms
+
+| IOS XR Release | Linux Kernel Basis | Supported Hardware Families | Supported |
+|---------------|-------------------|-----------------------------|-----------|
+| IOS XR 6.x+ | Linux-based | ASR 9000 Series | ✅ |
+| IOS XR 6.x+ | Linux-based | NCS 500 Series | ✅ |
+| IOS XR 6.x+ | Linux-based | NCS 540 / 5500 Series | ✅ |
+| IOS XR 6.x+ | Linux-based | NCS 560 / 6000 Series | ✅ |
+| IOS XR 6.x+ | Linux-based | 8000 Series Routers | ✅ |
+
+### Not Supported IOS XR Platforms
+
+| IOS XR Release | Hardware Families | Supported | Reason |
+|---------------|-------------------|-----------|--------|
+| IOS XR pre-6.x | Legacy CRS / XR platforms | ❌ | Non-Linux or kernel below minimum |
+
+---
+
+## Support Rule Summary
+
+- NX-OS **9.x and 10.x** → Linux 3.10 → **Supported**
+- IOS XR **6.x and newer** → Linux-based → **Supported**
+- Any Cisco network OS based on **Linux kernel < 2.6.32** → **Not Supported**
+
+---
+
+
 ### Network & Embedded Devices (Kernel ≥ 2.6.32)
 
 | Platform | Description | Supported |
