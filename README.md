@@ -58,13 +58,13 @@ Sandfly supports a broad range of Linux-based operating systems and platforms.
 | Arch Linux | Kernel 2.6.32 or newer | ✅ |
 | Gentoo | Kernel 2.6.32 or newer | ✅ |
 
-### Cloud & Virtualization Platforms
+### Cloud & Virtualization Platforms (Kernel ≥ 2.6.32)
 
-| Platform |
-|---------|
-| Amazon Linux |
-| DigitalOcean Linux images |
-| Microsoft Azure Linux images |
+| Platform | Supported |
+|---------|-----------|
+| Amazon Linux | ✅ |
+| DigitalOcean Linux images | ✅ |
+| Microsoft Azure Linux images | ✅ |
 
 ### Network & Embedded Devices
 
