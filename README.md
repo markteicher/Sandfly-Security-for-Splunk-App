@@ -4,11 +4,6 @@
 
 Sandfly Security is an agentless intrusion detection and incident response platform for Linux. 
 
-## Supporting Operating Systems
-
-
-
-
 Sandfly Security automatically analyzes Linux hosts for intruders 24 hours a day without loading any software on endpoints. 
 
 Sandfly Security retrieves security, hardware, operating system, and related system data from Linux hosts and makes this data available for analysis. Sandfly operates across virtually all Linux distributions immediately and is designed to function without introducing risk to system stability or performance.
@@ -22,6 +17,10 @@ This includes Sandfly Security alarms, suspicious activity results, SSH Hunter d
 Data retrieved by Sandfly Securitu can also be used by Splunk users to build searches, reports, anomaly detection models, and incident response workflows within Splunk.
 
 The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
+
+## Supporting Operating Systems
+
+
 
 ⚠️ Disclaimer
 
