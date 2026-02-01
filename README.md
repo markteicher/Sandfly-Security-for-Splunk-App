@@ -562,25 +562,55 @@ Run the following search to confirm data ingestion:
 
 ---
 
-## App Structure
+## Directory Structure
 
 Sandfly_Security_For_Splunk_App/
-  app.manifest
-  LICENSE
-  README.md
-  default/
-    app.conf
-    inputs.conf
-    indexes.conf
-    props.conf
-    transforms.conf
-    savedsearches.conf
-    data/ui/
-      nav/
-      views/
-  bin/
-  metadata/
-  static/
+├── app.manifest
+├── README.md
+├── LICENSE
+│
+├── default/
+│   ├── app.conf
+│   ├── web.conf
+│   ├── inputs.conf
+│   ├── props.conf
+│   ├── transforms.conf
+│   ├── macros.conf
+│   ├── savedsearches.conf
+│   ├── restmap.conf
+│   ├── authorize.conf
+│   ├── data/
+│   │   └── ui/
+│   │       ├── nav/
+│   │       │   └── default.xml
+│   │       └── views/
+│   │           ├── setup.xml
+│   │           ├── overview.xml
+│   │           ├── hosts.xml
+│   │           ├── sandflies.xml
+│   │           ├── results.xml
+│   │           ├── sshhunter.xml
+│   │           ├── scans.xml
+│   │           ├── schedules.xml
+│   │           ├── notifications.xml
+│   │           ├── reports.xml
+│   │           └── audit.xml
+│
+├── bin/
+│   ├── sandfly_input.py
+│   ├── sandfly_api.py
+│   ├── sandfly_setup_handler.py
+│   ├── sandfly_validation.py
+│   └── __init__.py
+│
+├── metadata/
+│   ├── default.meta
+│   └── local.meta
+│
+└── static/
+    ├── appIcon.png
+    ├── appIcon_2x.png
+    └── screenshots/
 
 ---
 
