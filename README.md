@@ -458,6 +458,7 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | GET | /sshhunter/users | Y | Y | Y | Y | |
 | GET | /sshhunter/users/:username | Y | Y | Y | Y | |
 | GET | /sshhunter/hosts | Y | Y | Y | Y | |
+
 ---
 ## Features
 
@@ -565,45 +566,47 @@ Run the following search to confirm data ingestion:
 ## Directory Structure
 
 Sandfly_Security_For_Splunk_App/
-  app.manifest
-  LICENSE
-  README.md
-  default/
-    app.conf
-    inputs.conf
-    props.conf
-    transforms.conf
-    macros.conf
-    restmap.conf
-    savedsearches.conf
-    web.conf
-    data/
-      ui/
-        nav/
-          default.xml
-        views/
-          setup.xml
-          sandfly_overview.xml
-          sandfly_hosts.xml
-          sandfly_sandflies.xml
-          sandfly_results.xml
-          sandfly_sshhunter.xml
-          sandfly_scans.xml
-          sandfly_schedules.xml
-          sandfly_notifications.xml
-          sandfly_reports.xml
-          sandfly_audit.xml
-  bin/
-    sandfly_input.py
-    sandfly_setup_handler.py
-    sandfly_validation.py
-  metadata/
-    default.meta
-    local.meta
-  static/
-    appIcon.png
-    appIcon_2x.png
-    
+├── app.manifest
+├── LICENSE
+├── README.md
+├── default/
+│   ├── app.conf
+│   ├── inputs.conf
+│   ├── props.conf
+│   ├── transforms.conf
+│   ├── macros.conf
+│   ├── restmap.conf
+│   ├── savedsearches.conf
+│   ├── web.conf
+│   └── data/
+│       └── ui/
+│           ├── nav/
+│           │   └── default.xml
+│           └── views/
+│               ├── setup.xml
+│               ├── sandfly_overview.xml
+│               ├── sandfly_hosts.xml
+│               ├── sandfly_sandflies.xml
+│               ├── sandfly_results.xml
+│               ├── sandfly_sshhunter.xml
+│               ├── sandfly_scans.xml
+│               ├── sandfly_schedules.xml
+│               ├── sandfly_notifications.xml
+│               ├── sandfly_reports.xml
+│               └── sandfly_audit.xml
+├── bin/
+│   ├── sandfly_input.py
+│   ├── sandfly_setup_handler.py
+│   └── sandfly_validation.py
+├── metadata/
+│   ├── default.meta
+│   └── local.meta
+└── static/
+    ├── appIcon.png
+    └── appIcon_2x.png
+
+
+
 ---
 
 ## Requirements
