@@ -18,9 +18,13 @@ Data retrieved by Sandfly Securitu can also be used by Splunk users to build sea
 
 The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
 
+
+---
 ## Supporting Operating Systems
 
-## Linux Distributions
+Sandfly supports a broad range of Linux-based operating systems and platforms. 
+
+### Linux Distributions
 
 | Distribution |
 |-------------|
@@ -36,7 +40,7 @@ The Splunk App is intended to surface Sandfly data directly inside Splunk so tha
 | Arch Linux |
 | Gentoo |
 
-## Cloud & Virtualization Platforms
+### Cloud & Virtualization Platforms
 
 | Platform |
 |---------|
@@ -44,13 +48,13 @@ The Splunk App is intended to surface Sandfly data directly inside Splunk so tha
 | DigitalOcean Linux images |
 | Microsoft Azure Linux images |
 
-## Network & Embedded Devices
+### Network & Embedded Devices
 
 | Platform | Description |
 |---------|-------------|
 | Cisco network devices | Linux-based operating systems on Cisco network platforms |
 | Juniper network devices | Linux-based operating systems on Juniper network platforms |
-| Embedded Linux systems | Embedded and appliance-based Linux systems (e.g., Raspberry Pi) |
+| Embedded Linux systems | Embedded and appliance-based Linux systems, including devices such as Raspberry Pi |
 
 ---
 ⚠️ Disclaimer
