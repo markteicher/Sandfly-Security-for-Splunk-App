@@ -26,37 +26,73 @@ Sandfly supports a broad range of Linux-based operating systems and platforms.
 
 ### Supported Linux Distribution Builds (Kernel ≥ 2.6.32)
 
+---
+## Supporting Operating Systems
+
+Sandfly supports **Linux-based operating systems only**.  
+
+Support is determined by **Linux kernel capability (≥ 2.6.32)** and **SSH access**, not by Unix lineage or proprietary UNIX variants.
+
+Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
+
+---
+
+### Supported Linux Distribution Builds  
+**Minimum requirement: Linux kernel 2.6.32 or newer**
+
+---
+
 #### Red Hat–based Distributions
 
-| Distribution | Build / Major Version | Kernel Version | Supported |
-|-------------|-----------------------|---------------|-----------|
-| RHEL | 6.x | 2.6.32 | ✅ |
-| RHEL | 7.x | 3.x | ✅ |
-| RHEL | 8.x | 4.x | ✅ |
-| RHEL | 9.x | 5.x | ✅ |
-| CentOS | 6.x | 2.6.32 | ✅ |
-| CentOS | 7.x | 3.x | ✅ |
-| CentOS Stream | 8+ | 4.x+ | ✅ |
-| AlmaLinux | 8+ | 4.x+ | ✅ |
-| Rocky Linux | 8+ | 4.x+ | ✅ |
+| Distribution | Specific Release | Kernel Version | Supported |
+|-------------|------------------|---------------|-----------|
+| RHEL | 6.0 – 6.10 | 2.6.32 | ✅ |
+| RHEL | 7.0 – 7.9 | 3.10 | ✅ |
+| RHEL | 8.0 – 8.10 | 4.18 | ✅ |
+| RHEL | 9.0 – 9.x | 5.14 | ✅ |
+| CentOS | 6.0 – 6.10 | 2.6.32 | ✅ |
+| CentOS | 7.0 – 7.9 | 3.10 | ✅ |
+| CentOS Stream | 8 | 4.18 | ✅ |
+| CentOS Stream | 9 | 5.14 | ✅ |
+| AlmaLinux | 8.x | 4.18 | ✅ |
+| AlmaLinux | 9.x | 5.14 | ✅ |
+| Rocky Linux | 8.x | 4.18 | ✅ |
+| Rocky Linux | 9.x | 5.14 | ✅ |
+
+---
 
 #### Debian / Ubuntu–based Distributions
 
-| Distribution | Build / Release | Kernel Version | Supported |
-|-------------|-----------------|---------------|-----------|
+| Distribution | Specific Release | Kernel Version | Supported |
+|-------------|------------------|---------------|-----------|
 | Debian | 6 (Squeeze) | 2.6.32 | ✅ |
-| Debian | 7+ | 3.x+ | ✅ |
-| Ubuntu | 10.04 | 2.6.32 | ✅ |
-| Ubuntu | 12.04+ | 3.x+ | ✅ |
+| Debian | 7 (Wheezy) | 3.2 | ✅ |
+| Debian | 8 (Jessie) | 3.16 | ✅ |
+| Debian | 9 (Stretch) | 4.9 | ✅ |
+| Debian | 10 (Buster) | 4.19 | ✅ |
+| Debian | 11 (Bullseye) | 5.10 | ✅ |
+| Debian | 12 (Bookworm) | 6.1 | ✅ |
+| Ubuntu | 10.04 LTS | 2.6.32 | ✅ |
+| Ubuntu | 12.04 LTS | 3.2 | ✅ |
+| Ubuntu | 14.04 LTS | 3.13 | ✅ |
+| Ubuntu | 16.04 LTS | 4.4 | ✅ |
+| Ubuntu | 18.04 LTS | 4.15 | ✅ |
+| Ubuntu | 20.04 LTS | 5.4 | ✅ |
+| Ubuntu | 22.04 LTS | 5.15 | ✅ |
+| Ubuntu | 24.04 LTS | 6.8 | ✅ |
 
-#### Other Distributions
+---
 
-| Distribution | Supported Condition | Supported |
-|-------------|---------------------|-----------|
-| Fedora | Kernel 2.6.32 or newer | ✅ |
-| SUSE | SLES 11 SP1 or newer | ✅ |
-| Arch Linux | Kernel 2.6.32 or newer | ✅ |
-| Gentoo | Kernel 2.6.32 or newer | ✅ |
+#### Other Linux Distributions
+
+| Distribution | Specific Release / Condition | Kernel Version | Supported |
+|-------------|-----------------------------|---------------|-----------|
+| Fedora | 16+ | ≥ 3.x | ✅ |
+| SUSE Linux Enterprise | 11 SP1+ | ≥ 2.6.32 | ✅ |
+| SUSE Linux Enterprise | 12 | 3.12 | ✅ |
+| SUSE Linux Enterprise | 15 | 4.12+ | ✅ |
+| Arch Linux | Rolling (kernel ≥ 2.6.32) | Rolling | ✅ |
+| Gentoo | Rolling (kernel ≥ 2.6.32) | Rolling | ✅ |
 
 ### Cloud & Virtualization Platforms (Kernel ≥ 2.6.32)
 
