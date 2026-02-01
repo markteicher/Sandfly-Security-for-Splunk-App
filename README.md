@@ -68,11 +68,13 @@ Sandfly supports a broad range of Linux-based operating systems and platforms.
 
 ### Network & Embedded Devices
 
-| Platform | Description |
-|---------|-------------|
-| Cisco network devices | Linux-based operating systems on Cisco network platforms |
-| Juniper network devices | Linux-based operating systems on Juniper network platforms |
-| Embedded Linux systems | Embedded and appliance-based Linux systems, including devices such as Raspberry Pi |
+### Network & Embedded Devices (Kernel ≥ 2.6.32)
+
+| Platform | Description | Supported |
+|---------|-------------|-----------|
+| Cisco network devices | Linux-based operating systems on Cisco network platforms | ✅ |
+| Juniper network devices | Linux-based operating systems on Juniper network platforms | ✅ |
+| Embedded Linux systems | Embedded and appliance-based Linux systems, including devices such as Raspberry Pi | ✅ |
 
 ---
 ⚠️ Disclaimer
