@@ -564,7 +564,7 @@ Run the following search to confirm data ingestion:
 ---
 
 ## Directory Structure
-
+```
 Sandfly_Security_For_Splunk_App/
 ├── app.manifest
 ├── LICENSE
@@ -604,8 +604,7 @@ Sandfly_Security_For_Splunk_App/
 └── static/
     ├── appIcon.png
     └── appIcon_2x.png
-
-
+```
 
 ---
 
