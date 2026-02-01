@@ -24,21 +24,39 @@ The Splunk App is intended to surface Sandfly data directly inside Splunk so tha
 
 Sandfly supports a broad range of Linux-based operating systems and platforms. 
 
-### Linux Distributions
+### Supported Linux Distribution Builds (Kernel ≥ 2.6.32)
 
-| Distribution |
-|-------------|
-| Red Hat Enterprise Linux (RHEL) |
-| AlmaLinux |
-| Rocky Linux |
-| CentOS |
-| CentOS Stream |
-| Ubuntu |
-| Debian |
-| Fedora |
-| SUSE |
-| Arch Linux |
-| Gentoo |
+#### Red Hat–based Distributions
+
+| Distribution | Build / Major Version | Kernel Version | Supported |
+|-------------|-----------------------|---------------|-----------|
+| RHEL | 6.x | 2.6.32 | ✅ |
+| RHEL | 7.x | 3.x | ✅ |
+| RHEL | 8.x | 4.x | ✅ |
+| RHEL | 9.x | 5.x | ✅ |
+| CentOS | 6.x | 2.6.32 | ✅ |
+| CentOS | 7.x | 3.x | ✅ |
+| CentOS Stream | 8+ | 4.x+ | ✅ |
+| AlmaLinux | 8+ | 4.x+ | ✅ |
+| Rocky Linux | 8+ | 4.x+ | ✅ |
+
+#### Debian / Ubuntu–based Distributions
+
+| Distribution | Build / Release | Kernel Version | Supported |
+|-------------|-----------------|---------------|-----------|
+| Debian | 6 (Squeeze) | 2.6.32 | ✅ |
+| Debian | 7+ | 3.x+ | ✅ |
+| Ubuntu | 10.04 | 2.6.32 | ✅ |
+| Ubuntu | 12.04+ | 3.x+ | ✅ |
+
+#### Other Distributions
+
+| Distribution | Supported Condition | Supported |
+|-------------|---------------------|-----------|
+| Fedora | Kernel 2.6.32 or newer | ✅ |
+| SUSE | SLES 11 SP1 or newer | ✅ |
+| Arch Linux | Kernel 2.6.32 or newer | ✅ |
+| Gentoo | Kernel 2.6.32 or newer | ✅ |
 
 ### Cloud & Virtualization Platforms
 
