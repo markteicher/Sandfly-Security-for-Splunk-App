@@ -270,13 +270,56 @@ Junos Evolved OS is natively Linux-based and designed for modern routing and swi
 - Support is determined by **Linux-based OS architecture**, not hardware alone
 - SSH access is required
 
-### Network & Embedded Devices (Kernel ≥ 2.6.32)
+---
+### Embedded Linux System Support
 
-| Platform | Description | Supported |
-|---------|-------------|-----------|
-| Cisco network devices | Linux-based operating systems on Cisco network platforms | ✅ |
-| Juniper network devices | Linux-based operating systems on Juniper network platforms | ✅ |
-| Embedded Linux systems | Embedded and appliance-based Linux systems, including devices such as Raspberry Pi | ✅ |
+Support applies to **embedded and appliance-based Linux systems** that meet the minimum kernel requirement (≥ 2.6.32) and provide SSH access.
+
+---
+
+#### Embedded Linux Platforms (General)
+
+| Platform Type | Release / Era | Typical Kernel Version | Supported |
+|--------------|---------------|------------------------|-----------|
+| Embedded Linux | Legacy embedded systems (2010–2011) | 2.6.32–2.6.39 | ✅ |
+| Embedded Linux | Mid-generation embedded systems (2012–2015) | 3.x | ✅ |
+| Embedded Linux | Modern embedded systems (2016–2019) | 4.x | ✅ |
+| Embedded Linux | Current embedded systems (2020–present) | 5.x–6.x | ✅ |
+
+Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs), provided the running kernel meets the minimum requirement.
+
+---
+
+#### Raspberry Pi Platforms
+
+| Platform | OS / Release Era | Typical Kernel Version | Supported |
+|---------|------------------|------------------------|-----------|
+| Raspberry Pi | Early Raspbian (2012–2014) | 3.x | ✅ |
+| Raspberry Pi | Raspbian / Raspberry Pi OS (2015–2018) | 4.x | ✅ |
+| Raspberry Pi | Raspberry Pi OS (2019–2022) | 5.x | ✅ |
+| Raspberry Pi | Raspberry Pi OS (2023–present) | 6.x | ✅ |
+
+---
+
+#### Embedded CPU Architectures
+
+| Architecture | Kernel Requirement | Supported |
+|-------------|--------------------|-----------|
+| ARM | Kernel ≥ 2.6.32 (newer required on some platforms) | ✅ |
+| ARM64 (AArch64) | Kernel ≥ 3.x | ✅ |
+| MIPS | Kernel ≥ 2.6.32 (platform-dependent) | ✅ |
+| PowerPC / IBM Power | Kernel ≥ 3.x | ✅ |
+
+---
+
+#### Embedded & Appliance Systems
+
+| System Type | Description | Supported |
+|------------|-------------|-----------|
+| Embedded appliances | Purpose-built Linux appliances (network, security, OT devices) | ✅ |
+| Custom embedded systems | Vendor-customized Linux systems | ✅ |
+| Industrial / OT Linux | Embedded Linux in industrial environments | ✅ |
+
 
 ---
 ⚠️ Disclaimer
