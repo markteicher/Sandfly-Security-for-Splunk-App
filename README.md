@@ -222,6 +222,53 @@ Support is determined by whether the platform runs a Linux-based OS meeting the 
 
 ---
 
+---
+### Juniper Network Device Support (Linux-Based Operating Systems)
+
+Support applies to **Linux-based Juniper operating systems** that meet the minimum kernel requirement (≥ 2.6.32) and provide SSH access.
+
+---
+
+#### Juniper Junos OS (Traditional → Linux-Based Transition)
+
+| Operating System | Release / Era | Linux Kernel Basis | Supported |
+|------------------|---------------|--------------------|-----------|
+| Junos OS | Pre-15.x (FreeBSD-based) | Non-Linux | ❌ |
+| Junos OS | 15.x (early transition) | Hybrid / partial Linux | ❌ |
+| Junos OS | 17.x – 18.x | Linux-based | ✅ |
+| Junos OS | 19.x – 20.x | Linux-based | ✅ |
+| Junos OS | 21.x – 22.x | Linux-based | ✅ |
+| Junos OS | 23.x – present | Linux-based | ✅ |
+
+Support applies to Junos OS releases after Juniper’s transition to a Linux-based architecture.
+
+---
+
+#### Juniper Evolved OS (Junos EVO)
+
+| Operating System | Release Train | Linux Kernel Basis | Supported |
+|------------------|---------------|--------------------|-----------|
+| Junos Evolved OS (EVO) | All releases | Linux-based | ✅ |
+
+Junos Evolved OS is natively Linux-based and designed for modern routing and switching platforms.
+
+---
+
+#### Juniper Hardware Families (Linux-Based OS)
+
+| Hardware Family | Operating System | Supported |
+|-----------------|------------------|-----------|
+| MX Series Routers | Junos OS (Linux-based releases) | ✅ |
+| PTX Series Routers | Junos OS / Junos EVO | ✅ |
+| QFX Series Switches | Junos OS (Linux-based releases) | ✅ |
+| EX Series Switches | Junos OS (Linux-based releases) | ✅ |
+
+---
+
+**Notes**
+- Traditional FreeBSD-based Junos OS releases are **not supported**
+- Support is determined by **Linux-based OS architecture**, not hardware alone
+- SSH access is required
 
 ### Network & Embedded Devices (Kernel ≥ 2.6.32)
 
