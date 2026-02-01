@@ -21,7 +21,6 @@ The Splunk App is intended to surface Sandfly data directly inside Splunk so tha
 ## Supporting Operating Systems
 
 
-
 ⚠️ Disclaimer
 
 These tools are not official Sandfly Security products or utilities
@@ -165,11 +164,21 @@ Sandfly_Security_For_Splunk_App/
 
 ---
 
+## ✅ AppInspect Compliance
+
+- Proper Splunk directory structure
+- Inputs disabled by default
+- No hardcoded credentials
+- Secure credential storage
+- Raw JSON ingestion
+- MIT License
+
+---
+
 ## Reference
 
 - Sandfly Security product documentation
   https://docs.sandflysecurity.com
-
 
 - OAS Link: https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml🡵
 - Splunk documentation: https://docs.splunk.com
