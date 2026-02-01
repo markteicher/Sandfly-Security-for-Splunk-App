@@ -72,7 +72,7 @@ To ingest events from a Sandfly Security server, the following configuration ite
 2. Login Username  
 3. Login Password  
 
-These credentials are used to authenticate REST API requests to the Sandfly Security server.
+These credentials are used to authenticate API requests to the Sandfly Security server.
 
 ---
 
@@ -168,11 +168,14 @@ Sandfly_Security_For_Splunk_App/
 ## Reference
 
 - Sandfly Security product documentation
-- Sandfly Security REST API documentation
+
+
+- OAS Link: https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml🡵
 - Splunk documentation: https://docs.splunk.com
 
 ---
 
 ## License
 
-Refer to the application package for licensing information.
+Sandfly Security, Ltd. ( https://www.sandflysecurity.com/🡵 )
+
