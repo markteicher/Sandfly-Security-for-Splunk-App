@@ -1,0 +1,120 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_executive_overview.xml
+ Sandfly Security for Splunk App
+ Executive Overview Dashboard
+=============================================================================
+
+PURPOSE
+
+Executive-level operational summary derived from Sandfly Host Snapshot data.
+Provides high-level visibility into:
+
+- Host coverage and monitoring health
+- Active vs inactive vs missing systems
+- Overall monitoring effectiveness
+
+All metrics are derived from /v4/reports/host_snapshot using explicit spath.
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Executive Overview</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: COVERAGE METRICS                                         -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Monitoring Coverage (%)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath path=host_counts.active output=active
+            | spath path=host_counts.inactive output=inactive
+            | spath path=host_counts.missing output=missing
+            | eval total = active + inactive + missing
+            | eval coverage_pct = round((active / total) * 100, 1)
+            | stats latest(coverage_pct) as coverage_pct
+          </query>
+        </search>
+        <option name="suffix">%</option>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Total Hosts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath path=host_counts.active output=active
+            | spath path=host_counts.inactive output=inactive
+            | spath path=host_counts.missing output=missing
+            | eval total = active + inactive + missing
+            | stats latest(total) as total_hosts
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: HOST STATE DISTRIBUTION                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Host Status Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath path=host_counts.active output=active
+            | spath path=host_counts.inactive output=inactive
+            | spath path=host_counts.missing output=missing
+            | eval Active=active
+            | eval Inactive=inactive
+            | eval Missing=missing
+            | table Active Inactive Missing
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: EXECUTIVE SUMMARY TABLE                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Executive Summary</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath path=host_counts.active output=active
+            | spath path=host_counts.inactive output=inactive
+            | spath path=host_counts.missing output=missing
+            | eval total = active + inactive + missing
+            | eval coverage_pct = round((active / total) * 100, 1)
+            | stats
+                latest(active) as "Active Hosts"
+                latest(inactive) as "Inactive Hosts"
+                latest(missing) as "Missing Hosts"
+                latest(total) as "Total Hosts"
+                latest(coverage_pct) as "Coverage %"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
