@@ -1,0 +1,219 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_permissions_matrix.xml
+ Sandfly Security for Splunk App
+ Users, Roles, Permissions, and Risk Exposure Matrix
+=============================================================================
+
+PURPOSE
+
+This dashboard provides a comprehensive, read-only view of:
+
+- Sandfly users and assigned roles
+- Effective API permissions implied by those roles
+- High-risk access combinations
+- Privilege drift over time (new administrators)
+
+It is intended for:
+
+- Executive oversight of access risk
+- Security operations governance
+- Compliance and audit validation
+- Platform administration review
+
+This view does NOT modify users, roles, or permissions.
+
+=============================================================================
+
+DATA SOURCES
+
+- GET /v4/users
+  Sourcetype: sandfly:users
+
+- Role → API endpoint access mapping
+  Derived from Sandfly API Endpoint Role Security Matrix documentation
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Users & Permissions</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: EXECUTIVE SUMMARY                                        -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Administrators</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles=admin OR roles=system
+            | stats dc(username)
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>API-Enabled Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles=api_result_read OR roles=api_scan
+            | stats dc(username)
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>High-Risk Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval is_admin=if(mvfind(roles,"admin")>=0 OR mvfind(roles,"system")>=0,1,0)
+            | eval has_api=if(mvfind(roles,"api_result_read")>=0 OR mvfind(roles,"api_scan")>=0,1,0)
+            | search is_admin=1 has_api=1 sso=false
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: ROLE DISTRIBUTION                                        -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>User Count by Role</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | stats dc(username) as users by roles
+            | sort - users
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: ROLE → API PERMISSION COVERAGE                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Role → API Endpoint Coverage</title>
+      <table>
+        <search>
+          <query>
+            | makeresults
+            | eval role="admin", auth="✅", version="✅", license="✅", config="✅", hosts="✅", results="✅", scan="✅"
+            | append [
+                | makeresults
+                | eval role="system", auth="✅", version="✅", license="✅", config="❌", hosts="❌", results="❌", scan="❌"
+              ]
+            | append [
+                | makeresults
+                | eval role="api_result_read", auth="❌", version="❌", license="❌", config="❌", hosts="✅", results="✅", scan="❌"
+              ]
+            | append [
+                | makeresults
+                | eval role="api_scan", auth="❌", version="❌", license="❌", config="❌", hosts="❌", results="❌", scan="✅"
+              ]
+            | append [
+                | makeresults
+                | eval role="user", auth="❌", version="❌", license="❌", config="❌", hosts="❌", results="❌", scan="❌"
+              ]
+            | table role auth version license config hosts results scan
+            | rename
+                auth AS "Auth / Login"
+                version AS "Version"
+                license AS "License"
+                config AS "Config"
+                hosts AS "Hosts"
+                results AS "Results"
+                scan AS "Scan"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: HIGH-RISK USER DETAIL                                    -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>High-Risk Users (Admin + API + No SSO)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval is_admin=if(mvfind(roles,"admin")>=0 OR mvfind(roles,"system")>=0,1,0)
+            | eval has_api=if(mvfind(roles,"api_result_read")>=0 OR mvfind(roles,"api_scan")>=0,1,0)
+            | search is_admin=1 has_api=1 sso=false
+            | eval roles_list=mvjoin(roles,", ")
+            | table username full_name email roles_list last_login_date last_login_ip
+            | sort username
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 5: ACCESS DRIFT                                             -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>New Administrators (30 / 90 Days)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles=admin OR roles=system
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S")
+            | eval age_days=(now()-created_epoch)/86400
+            | eval window=case(
+                age_days<=30,"Last 30 Days",
+                age_days<=90,"Last 90 Days",
+                true(),"Older"
+              )
+            | stats count as users by window
+            | sort window
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
