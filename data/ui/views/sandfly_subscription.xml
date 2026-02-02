@@ -1,0 +1,121 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_subscription.xml
+ Sandfly Security for Splunk App
+ Subscription, License, and Usage Overview
+=============================================================================
+
+PURPOSE
+
+Displays Sandfly subscription status, license details, and current usage
+by composing data from:
+
+- /v4/license      → sandfly:license
+- /v4/status       → sandfly:status
+- object counts    → native Splunk aggregation
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Subscription & Usage</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: LICENSE STATUS                                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Subscription Status</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:license
+            | stats latest(status) as status
+          </query>
+        </search>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>License Dates</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:license
+            | stats
+                latest(issued_date) as "Issued Date"
+                latest(end_date) as "End Date"
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: HOST USAGE                                               -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Host Usage</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:status
+            | stats
+                latest(hosts.total) as "Total Hosts"
+                latest(hosts.total_active) as "Active Hosts"
+                latest(hosts.total_inactive) as "Inactive Hosts"
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: RESULT ACTIVITY                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Result Activity (Current)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:status
+            | eval alerts=results.hourly.alert.total
+            | eval passes=results.hourly.pass.total
+            | eval errors=results.hourly.error.total
+            | eval total=results.hourly.all.total
+            | table alerts passes errors total
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: CONFIGURATION OBJECT COUNTS                              -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Current Configuration Usage</title>
+      <table>
+        <search>
+          <query>
+            | union
+                [ search index=* sourcetype=sandfly:hosts | stats count as value | eval metric="Hosts" ]
+                [ search index=* sourcetype=sandfly:jumphosts | stats count as value | eval metric="Jump Hosts" ]
+                [ search index=* sourcetype=sandfly:notifications | stats count as value | eval metric="Notifications" ]
+                [ search index=* sourcetype=sandfly:schedule | stats count as value | eval metric="Schedules" ]
+                [ search index=* sourcetype=sandfly:sandflies | stats count as value | eval metric="Sandflies" ]
+                [ search index=* sourcetype=sandfly:ssh:key | stats count as value | eval metric="SSH Keys" ]
+                [ search index=* sourcetype=sandfly:savedviews | stats count as value | eval metric="Saved Views" ]
+            | table metric value
+            | sort metric
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
