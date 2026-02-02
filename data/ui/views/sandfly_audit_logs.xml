@@ -1,0 +1,116 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_audit_logs.xml
+ Sandfly Security for Splunk App
+ Audit Logs
+=============================================================================
+
+PURPOSE
+
+This view presents Sandfly Security audit activity in two layers:
+
+1. Executive summary panels:
+   - What types of actions are occurring
+   - Which users are performing actions
+   - Where actions originate (source IPs)
+
+2. Detailed audit log records for investigation and compliance review
+
+Data Source:
+- GET /v4/audit
+- Sourcetype: sandfly:audit
+
+All fields are extracted explicitly using spath.
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Audit Logs</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: EXECUTIVE SUMMARY                                        -->
+  <!-- =============================================================== -->
+  <row>
+
+    <!-- Activity by Type -->
+    <panel>
+      <title>Audit Activity by Type</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit
+            | spath
+            | stats count by record_type
+            | sort - count
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+
+    <!-- Activity by User -->
+    <panel>
+      <title>Top Users</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit
+            | spath
+            | stats count by username
+            | sort - count
+            | head 10
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+
+    <!-- Activity by Source IP -->
+    <panel>
+      <title>Top Source IPs</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit
+            | spath
+            | stats count by ip_addr
+            | sort - count
+            | head 10
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: DETAILED AUDIT LOGS                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Audit Log Events</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit
+            | spath
+            | table
+                _time
+                record_type
+                username
+                ip_addr
+                message
+            | sort - _time
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="count">25</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
