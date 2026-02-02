@@ -1,0 +1,134 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_threatfeeds.xml
+ Sandfly Security for Splunk App
+ Threat Feeds
+=============================================================================
+
+PURPOSE
+
+Displays configured Sandfly threat feeds and their operational status.
+
+Data source:
+- GET /v4/threatfeeds
+- sourcetype: sandfly:threatfeeds
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Threat Feeds</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: SUMMARY METRICS                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total Threat Feeds</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Active Feeds</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | search active=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Disabled Feeds</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | search state=disabled
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: THREAT FEED INVENTORY                                    -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Configured Threat Feeds</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | table
+                id
+                name
+                description
+                state
+                active
+                interval_minutes
+                last_update
+                last_update_message
+                url
+            | sort name
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: UPDATE ACTIVITY                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Threat Feed Update Status</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | stats count by state
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Last Update Timeline</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | eval _time=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%3N")
+            | timechart span=1d count
+          </query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.legend.placement">bottom</option>
+      </chart>
+    </panel>
+  </row>
+
+</dashboard>
