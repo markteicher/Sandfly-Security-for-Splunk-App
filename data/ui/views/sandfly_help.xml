@@ -1,0 +1,129 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_help.xml
+ Sandfly Security for Splunk App
+ Help & Documentation
+=============================================================================
+
+PURPOSE
+
+Provides in-app help, documentation links, and operational guidance for
+users of the Sandfly Security for Splunk App. This view centralizes
+references to Sandfly documentation, API references, and Splunk app usage
+information.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Help</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: GETTING STARTED                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Getting Started</title>
+      <html>
+        <![CDATA[
+        <p>
+          The Sandfly Security for Splunk App integrates Sandfly Security
+          data directly into Splunk for analysis, monitoring, and response.
+        </p>
+        <ul>
+          <li>Ensure the Sandfly Security server is reachable from Splunk</li>
+          <li>Complete the setup wizard to configure connectivity</li>
+          <li>Verify data ingestion using the Overview dashboard</li>
+        </ul>
+        ]]>
+      </html>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: DOCUMENTATION LINKS                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Sandfly Documentation</title>
+      <html>
+        <![CDATA[
+        <ul>
+          <li>
+            <a href="https://docs.sandflysecurity.com" target="_blank">
+              Sandfly Security Documentation
+            </a>
+          </li>
+          <li>
+            <a href="https://docs.sandflysecurity.com/docs/user-interface-overview" target="_blank">
+              Sandfly User Interface Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://docs.sandflysecurity.com/reference/api-landing-page" target="_blank">
+              Sandfly REST API Reference
+            </a>
+          </li>
+          <li>
+            <a href="https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml" target="_blank">
+              Sandfly OpenAPI Specification
+            </a>
+          </li>
+        </ul>
+        ]]>
+      </html>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: SPLUNK APP USAGE                                         -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Splunk App Usage</title>
+      <html>
+        <![CDATA[
+        <ul>
+          <li>
+            Use <strong>Overview</strong> to confirm ingestion and operational health
+          </li>
+          <li>
+            Use <strong>Results</strong> to review alerts, pass, and error events
+          </li>
+          <li>
+            Use <strong>Hosts</strong> to review monitored Linux systems
+          </li>
+          <li>
+            Use <strong>SSH Hunter</strong> to analyze SSH key usage
+          </li>
+          <li>
+            Use <strong>Settings</strong> to manage users, licensing, and configuration
+          </li>
+        </ul>
+        ]]>
+      </html>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: SUPPORT                                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Support</title>
+      <html>
+        <![CDATA[
+        <p>
+          For Sandfly Security product support, contact Sandfly Security
+          through your existing support channels.
+        </p>
+        <p>
+          For Splunk platform assistance, refer to:
+          <a href="https://docs.splunk.com" target="_blank">Splunk Documentation</a>
+        </p>
+        ]]>
+      </html>
+    </panel>
+  </row>
+
+</dashboard>
