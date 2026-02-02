@@ -1,0 +1,209 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_sshhunter.xml
+ Sandfly Security for Splunk App
+ SSH Hunter
+=============================================================================
+
+PURPOSE
+
+Displays SSH Hunter key graph data collected from:
+
+- GET /v4/sshhunter/graph/key/id?structure=nested
+
+Expected sourcetype:
+- sandfly:sshhunter:graph
+
+Primary entities:
+- SSH keys
+- Users
+- Hosts
+- Zones
+- Categories
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>SSH Hunter</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: KEY METRICS                                              -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total SSH Keys</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search type=key
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Duplicate Keys</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search has_duplicate_keys=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Banned Key Violations</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search banned_key_violation=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Zone Violations</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search zone_violation=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: KEY INVENTORY                                            -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>SSH Key Inventory</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search type=key
+            | table
+                node_id
+                entity_id
+                name
+                value_label
+                key_first_seen
+                key_last_seen
+                has_duplicate_keys
+                banned_key_violation
+                zone_violation
+                parent_id
+            | sort name
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: ENTITY DISTRIBUTION                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Entities by Type</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | stats count by type
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Violations by Type</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | eval violation=case(
+                banned_key_violation=true,"Banned Key",
+                zone_violation=true,"Zone Violation"
+              )
+            | search violation=*
+            | stats count by violation
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: RECENT KEY ACTIVITY                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Recently Seen SSH Keys</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:sshhunter:graph
+            | spath path=data.graph_nodes{}
+            | mvexpand data.graph_nodes{}
+            | spath input=data.graph_nodes{}
+            | search type=key
+            | sort - key_last_seen
+            | head 10
+            | table name key_last_seen has_duplicate_keys banned_key_violation zone_violation
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
