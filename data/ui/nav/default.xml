@@ -104,6 +104,7 @@
   <collection label="Settings">
     <view name="sandfly_users"/>
     <view name="sandfly_licensing"/>
+    <view name="sandfly_subscription"/>
     <view name="sandfly_server_config"/>
   </collection>
 
