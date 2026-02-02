@@ -1,30 +1,41 @@
 <!--
 =============================================================================
- default/data/ui/views/sandfly_threatfeeds.xml
+ default/data/ui/views/sandfly_threat_feeds.xml
  Sandfly Security for Splunk App
- Threat Feeds
+ Threat Feed Configuration, Health, and Risk Dashboard
 =============================================================================
 
 PURPOSE
 
-Displays configured Sandfly threat feeds and their operational status.
+This dashboard provides full visibility into Sandfly Threat Feed
+configuration, operational health, and update reliability.
 
-Data source:
-- GET /v4/threatfeeds
-- sourcetype: sandfly:threatfeeds
+
+EXECUTIVE QUESTIONS ANSWERED
+
+- How many threat feeds are configured and active?
+- Which feeds are disabled or stale?
+- When were feeds last updated?
+- Are feeds failing to update?
+- How frequently are feeds scheduled to refresh?
+
+DATA SOURCE
+
+- /v4/threatfeeds → sourcetype=sandfly:threatfeeds
 
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Threat Feeds</label>
+  <label>Threat Feed Coverage & Health</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: SUMMARY METRICS                                          -->
+  <!-- ROW 1: EXECUTIVE METRICS                                       -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Total Threat Feeds</title>
+      <title>🧠 Total Threat Feeds</title>
       <single>
         <search>
           <query>
@@ -32,13 +43,13 @@ Data source:
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
         <option name="colorMode">block</option>
+        <option name="useColors">true</option>
       </single>
     </panel>
 
     <panel>
-      <title>Active Feeds</title>
+      <title>🟢 Active Feeds</title>
       <single>
         <search>
           <query>
@@ -47,88 +58,140 @@ Data source:
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
         <option name="colorMode">block</option>
+        <option name="useColors">true</option>
       </single>
     </panel>
 
     <panel>
-      <title>Disabled Feeds</title>
+      <title>🔴 Disabled Feeds</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:threatfeeds
-            | search state=disabled
+            | search active=false
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
         <option name="colorMode">block</option>
+        <option name="useColors">true</option>
       </single>
     </panel>
+
+    <panel>
+      <title>⚠️ Feeds With Update Errors</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | search last_update_message!=""
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: THREAT FEED INVENTORY                                    -->
+  <!-- ROW 2: UPDATE HEALTH                                           -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Configured Threat Feeds</title>
+      <title>⏱️ Feed Update Recency</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | spath path=last_update
+            | eval last_update_epoch=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%QZ")
+            | eval age_hours=(now()-last_update_epoch)/3600
+            | bucket age_hours span=24
+            | stats count by age_hours
+          </query>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.legend.placement">bottom</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>🔁 Update Interval Distribution (Minutes)</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | stats count by interval_minutes
+            | sort interval_minutes
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: HIGH-RISK FEEDS                                         -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🚩 Feeds Requiring Attention</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | spath
+            | eval last_update_epoch=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%QZ")
+            | eval age_days=(now()-last_update_epoch)/86400
+            | eval risk=case(
+                active=false, "🔴 Disabled",
+                age_days&gt;7, "🟡 Stale",
+                last_update_message!="" , "⚠️ Update Error"
+              )
+            | where risk!=""
+            | table name risk active interval_minutes last_update last_update_message url
+            | sort risk
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: FULL CONFIGURATION DETAIL                               -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📋 Threat Feed Configuration Detail</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:threatfeeds
             | table
-                id
                 name
                 description
-                state
                 active
+                state
                 interval_minutes
                 last_update
                 last_update_message
                 url
-            | sort name
+                lookup_url_template
           </query>
         </search>
         <option name="wrap">true</option>
-        <option name="rowNumbers">true</option>
       </table>
     </panel>
-  </row>
 
-  <!-- =============================================================== -->
-  <!-- ROW 3: UPDATE ACTIVITY                                          -->
-  <!-- =============================================================== -->
-  <row>
-    <panel>
-      <title>Threat Feed Update Status</title>
-      <chart>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:threatfeeds
-            | stats count by state
-          </query>
-        </search>
-        <option name="charting.chart">pie</option>
-        <option name="charting.legend.placement">right</option>
-      </chart>
-    </panel>
-
-    <panel>
-      <title>Last Update Timeline</title>
-      <chart>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:threatfeeds
-            | eval _time=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%3N")
-            | timechart span=1d count
-          </query>
-        </search>
-        <option name="charting.chart">line</option>
-        <option name="charting.legend.placement">bottom</option>
-      </chart>
-    </panel>
   </row>
 
 </dashboard>
