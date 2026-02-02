@@ -1,1 +1,244 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_host_snapshot.xml
+ Sandfly Security for Splunk App
+ Host Snapshot Report
+=============================================================================
 
+PURPOSE
+
+Displays a point-in-time operational snapshot of Linux host posture as
+reported by the Sandfly Security platform.
+
+This view visualizes aggregated report data collected from:
+
+  GET /v4/reports/host_snapshot
+
+The report includes:
+- Host state counts (active / inactive / missing)
+- Distribution breakdowns (distro, kernel, architecture)
+- Uptime statistics
+- Missing hosts
+- Host uptime inventory
+- Credential usage
+- Host tag distribution
+
+This view reflects a single snapshot report event and does not represent
+streaming or historical result data.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Host Snapshot</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: REPORT METADATA & HOST COUNTS                            -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Report Time</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | stats latest(report_time) as report_time
+          </query>
+        </search>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Active Hosts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | stats latest(host_counts.active) as active
+          </query>
+        </search>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Inactive Hosts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | stats latest(host_counts.inactive) as inactive
+          </query>
+        </search>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Missing Hosts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | stats latest(host_counts.missing) as missing
+          </query>
+        </search>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: UPTIME STATISTICS                                        -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Uptime Statistics (Days)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | stats
+                latest(uptime_stats.min) as min
+                latest(uptime_stats.q1) as q1
+                latest(uptime_stats.median) as median
+                latest(uptime_stats.q3) as q3
+                latest(uptime_stats.max) as max
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: DISTRIBUTION BREAKDOWNS                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Hosts by Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath distros{}
+            | mvexpand distros{}
+            | spath input=distros{} path=name output=distro
+            | spath input=distros{} path=count output=count
+            | stats sum(count) as count by distro
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Hosts by Kernel</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath kernels{}
+            | mvexpand kernels{}
+            | spath input=kernels{} path=name output=kernel
+            | spath input=kernels{} path=count output=count
+            | stats sum(count) as count by kernel
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: ARCHITECTURE & CREDENTIALS                               -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Hosts by Architecture</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath architectures{}
+            | mvexpand architectures{}
+            | spath input=architectures{} path=name output=architecture
+            | spath input=architectures{} path=count output=count
+            | stats sum(count) as count by architecture
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Credential Usage</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath credential{}
+            | mvexpand credential{}
+            | spath input=credential{} path=name output=credential
+            | spath input=credential{} path=count output=count
+            | table credential count
+            | sort -count
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 5: MISSING HOSTS                                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Missing Hosts</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath missing_hosts{}
+            | mvexpand missing_hosts{}
+            | spath input=missing_hosts{} path=target_address output=target_address
+            | spath input=missing_hosts{} path=node_name output=node_name
+            | spath input=missing_hosts{} path=last_seen output=last_seen
+            | spath input=missing_hosts{} path=kernel output=kernel
+            | spath input=missing_hosts{} path=distro output=distro
+            | spath input=missing_hosts{} path=uptime_days output=uptime_days
+            | table target_address node_name distro kernel uptime_days last_seen
+            | sort uptime_days
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 6: HOST UPTIME INVENTORY                                   -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Host Uptime Inventory</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:report:host_snapshot
+            | spath uptimes{}
+            | mvexpand uptimes{}
+            | spath input=uptimes{} path=target_address output=target_address
+            | spath input=uptimes{} path=node_name output=node_name
+            | spath input=uptimes{} path=distro output=distro
+            | spath input=uptimes{} path=kernel output=kernel
+            | spath input=uptimes{} path=uptime_days output=uptime_days
+            | table target_address node_name distro kernel uptime_days
+            | sort -uptime_days
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
