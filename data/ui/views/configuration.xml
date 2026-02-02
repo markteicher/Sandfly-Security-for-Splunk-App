@@ -1,0 +1,154 @@
+<!--
+=============================================================================
+ File: default/data/ui/views/configuration.xml
+
+ Sandfly Security for Splunk App
+ Add-on Configuration UI
+
+ This view provides the standard Splunk Add-on configuration experience:
+   - Accounts
+   - Logging
+   - Alert Actions Configuration
+
+ Backed by REST handlers defined in restmap.conf
+=============================================================================
+-->
+
+<configuration>
+
+  <!-- ================================================================ -->
+  <!-- Accounts                                                         -->
+  <!-- ================================================================ -->
+  <collection label="Accounts"
+              help="Configure Sandfly Security server connections and authentication.">
+
+    <endpoint name="sandfly_accounts"
+              label="Sandfly Accounts"
+              restUri="/servicesNS/nobody/sandfly_security_for_splunk/accounts"
+              allowNew="true"
+              allowEdit="true"
+              allowDelete="true">
+
+      <field name="name"
+             label="Account Name"
+             required="true"
+             help="Logical name for this Sandfly account." />
+
+      <field name="server_url"
+             label="Sandfly Server URL"
+             required="true"
+             help="Base URL of the Sandfly Security server (no trailing slash)." />
+
+      <field name="username"
+             label="Username"
+             required="true"
+             help="Sandfly Security username with API access." />
+
+      <field name="password"
+             label="Password"
+             type="password"
+             required="true"
+             encrypted="true"
+             help="Stored securely in Splunk credential storage." />
+
+      <field name="auth_method"
+             label="Authentication Method"
+             type="dropdown"
+             default="password">
+        <choice value="password">Username / Password</choice>
+        <choice value="sso">SSO / Token</choice>
+      </field>
+
+      <field name="proxy_mode"
+             label="Proxy Mode"
+             type="dropdown"
+             default="none">
+        <choice value="none">No Proxy</choice>
+        <choice value="proxy">Proxy (No Auth)</choice>
+        <choice value="proxy_auth">Proxy (Username / Password)</choice>
+      </field>
+
+      <field name="proxy_url"
+             label="Proxy URL"
+             help="Example: http://proxy.company.com:8080" />
+
+      <field name="proxy_username"
+             label="Proxy Username" />
+
+      <field name="proxy_password"
+             label="Proxy Password"
+             type="password"
+             encrypted="true" />
+
+    </endpoint>
+  </collection>
+
+  <!-- ================================================================ -->
+  <!-- Logging                                                          -->
+  <!-- ================================================================ -->
+  <collection label="Logging"
+              help="Control internal logging behavior for Sandfly inputs.">
+
+    <endpoint name="sandfly_logging"
+              label="Logging Settings"
+              restUri="/servicesNS/nobody/sandfly_security_for_splunk/logging"
+              allowNew="false"
+              allowEdit="true"
+              allowDelete="false">
+
+      <field name="log_level"
+             label="Log Level"
+             type="dropdown"
+             default="INFO">
+        <choice value="DEBUG">DEBUG</choice>
+        <choice value="INFO">INFO</choice>
+        <choice value="WARN">WARN</choice>
+        <choice value="ERROR">ERROR</choice>
+      </field>
+
+      <field name="enable_diagnostics"
+             label="Enable Diagnostic Logging"
+             type="boolean"
+             default="false"
+             help="Enable additional internal diagnostics for troubleshooting." />
+
+    </endpoint>
+  </collection>
+
+  <!-- ================================================================ -->
+  <!-- Alert Actions Configuration                                      -->
+  <!-- ================================================================ -->
+  <collection label="Alert Actions Configuration"
+              help="Configure Sandfly-related alerting and notification behavior.">
+
+    <endpoint name="sandfly_alert_actions"
+              label="Alert Actions"
+              restUri="/servicesNS/nobody/sandfly_security_for_splunk/alert_actions"
+              allowNew="true"
+              allowEdit="true"
+              allowDelete="true">
+
+      <field name="name"
+             label="Action Name"
+             required="true" />
+
+      <field name="type"
+             label="Action Type"
+             type="dropdown"
+             required="true">
+        <choice value="email">Email</choice>
+        <choice value="syslog">Syslog</choice>
+      </field>
+
+      <field name="enabled"
+             label="Enabled"
+             type="boolean"
+             default="true" />
+
+      <field name="description"
+             label="Description" />
+
+    </endpoint>
+  </collection>
+
+</configuration>
