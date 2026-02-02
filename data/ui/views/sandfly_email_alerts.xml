@@ -2,37 +2,32 @@
 =============================================================================
  default/data/ui/views/sandfly_email_alerts.xml
  Sandfly Security for Splunk App
- Email Alert Configuration & Coverage Analysis
+ Email Alerts Configuration & Risk Overview
 =============================================================================
 
 PURPOSE
 
-This view provides configuration-level visibility into Sandfly email alert
-definitions ingested from the Sandfly Security API endpoint:
+Provides visibility into Sandfly email alert configurations, including:
+- Overall alert coverage
+- Recipient and mail server concentration
+- Misconfigurations and operational risk
+- Mail authentication posture
 
-  GET /v4/alerts/email
+This view is designed to be understandable by executives while remaining
+actionable for operators and administrators.
 
-The dashboard focuses strictly on alert DELIVERY CONFIGURATION, not alert
-activity, and is intended to answer:
-
-- Are any alerts misconfigured or silently failing?
-- Is alert coverage resilient or dependent on single individuals?
-- How concentrated is alert distribution across recipients?
-- What mail infrastructure and authentication methods are in use?
-
-This view does NOT infer alert severity, delivery success, or alert volume.
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Email Alerts</label>
+  <label>📧 Email Alerts</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: EXECUTIVE SUMMARY METRICS                                -->
+  <!-- ROW 1: EXECUTIVE OVERVIEW METRICS                               -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Total Email Alerts</title>
+      <title>📧 Total Email Alerts</title>
       <single>
         <search>
           <query>
@@ -41,42 +36,12 @@ This view does NOT infer alert severity, delivery success, or alert volume.
           </query>
         </search>
         <option name="colorMode">block</option>
-        <option name="numberPrecision">0</option>
+        <option name="useColors">true</option>
       </single>
     </panel>
 
     <panel>
-      <title>Alerts With No Recipients</title>
-      <single>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | eval recipient_count=mvcount(email_recipients)
-            | search recipient_count=0 OR isnull(email_recipients)
-            | stats count
-          </query>
-        </search>
-        <option name="colorMode">block</option>
-      </single>
-    </panel>
-
-    <panel>
-      <title>Single-Recipient Alerts</title>
-      <single>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | eval recipient_count=mvcount(email_recipients)
-            | search recipient_count=1
-            | stats count
-          </query>
-        </search>
-        <option name="colorMode">block</option>
-      </single>
-    </panel>
-
-    <panel>
-      <title>Distinct Recipients</title>
+      <title>👥 Unique Recipients</title>
       <single>
         <search>
           <query>
@@ -86,28 +51,54 @@ This view does NOT infer alert severity, delivery success, or alert volume.
           </query>
         </search>
         <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🖥️ Mail Servers in Use</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | stats dc(mail_server)
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>⚠️ Misconfigured Alerts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | eval misconfigured=if(isnull(email_recipients) OR email_recipients="[]" OR isnull(email_sender) OR isnull(mail_server), 1, 0)
+            | stats sum(misconfigured)
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
       </single>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: COVERAGE & RISK GAPS                                     -->
+  <!-- ROW 2: ALERT CONFIGURATION RISKS                                -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Alert Coverage Risks</title>
+      <title>⚠️ Alert Configuration Risks</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
-            | eval recipient_count=mvcount(email_recipients)
-            | eval risk=case(
-                isnull(email_recipients) OR recipient_count=0, "No Recipients",
-                recipient_count=1, "Single Recipient",
-                true(), "OK"
-              )
-            | table name risk recipient_count email_sender mail_server
-            | sort risk
+            | eval recipients_ok=if(isnull(email_recipients) OR email_recipients="[]","❌","✅")
+            | eval sender_ok=if(isnull(email_sender),"❌","✅")
+            | eval port_ok=if(mail_port=587,"✅","⚠️")
+            | table name recipients_ok sender_ok mail_server mail_port port_ok
           </query>
         </search>
         <option name="wrap">true</option>
@@ -116,93 +107,53 @@ This view does NOT infer alert severity, delivery success, or alert volume.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: RECIPIENT CONCENTRATION                                  -->
+  <!-- ROW 3: RECIPIENT & SERVER CONCENTRATION                         -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Recipients by Alert Volume</title>
-      <table>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | mvexpand email_recipients
-            | stats count as alert_count by email_recipients
-            | sort - alert_count
-          </query>
-        </search>
-      </table>
-    </panel>
-
-    <panel>
-      <title>Shared vs Unique Recipients</title>
+      <title>📊 Recipient Distribution</title>
       <chart>
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
             | mvexpand email_recipients
             | stats count by email_recipients
-            | eval recipient_type=if(count&gt;1,"Shared","Unique")
-            | stats count by recipient_type
+            | sort - count
           </query>
         </search>
-        <option name="charting.chart">pie</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>📊 Mail Server Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | stats count by mail_server
+            | sort - count
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 4: MAIL INFRASTRUCTURE & AUTH POSTURE                       -->
+  <!-- ROW 4: MAIL AUTHENTICATION POSTURE                              -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Mail Server Authentication Usage</title>
+      <title>🔐 Mail Authentication Posture</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
-            | eval auth_type=if(isnull(mail_username) OR mail_username="",
-                               "Anonymous / No Auth",
-                               "Authenticated")
-            | stats count by auth_type
-          </query>
-        </search>
-      </table>
-    </panel>
-
-    <panel>
-      <title>Mail Servers & Ports</title>
-      <table>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | stats count by mail_server mail_port
-            | sort - count
-          </query>
-        </search>
-      </table>
-    </panel>
-  </row>
-
-  <!-- =============================================================== -->
-  <!-- ROW 5: FULL CONFIGURATION DETAIL                                -->
-  <!-- =============================================================== -->
-  <row>
-    <panel>
-      <title>Email Alert Configuration Details</title>
-      <table>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | eval recipient_count=mvcount(email_recipients)
-            | table
-                name
-                email_sender
-                email_recipients
-                recipient_count
-                mail_server
-                mail_port
-                mail_username
+            | eval auth_configured=if(isnull(mail_username),"❌","✅")
+            | table name mail_server mail_port auth_configured
           </query>
         </search>
         <option name="wrap">true</option>
