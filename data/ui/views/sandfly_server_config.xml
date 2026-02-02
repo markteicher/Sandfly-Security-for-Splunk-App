@@ -1,0 +1,95 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_server_config.xml
+ Sandfly Security for Splunk App
+ Server Configuration
+=============================================================================
+
+PURPOSE
+
+Displays the current Sandfly server configuration and connectivity state
+as ingested into Splunk. This view is read-only and reflects configuration
+data collected from the Sandfly REST API and app setup process.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Server Configuration</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: SERVER DETAILS                                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Sandfly Server Details</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:config
+            | stats latest(*) as *
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: API VERSION & STATUS                                     -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>API Version & Status</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:version
+            | stats latest(version) as "API Version"
+                    latest(build) as "Build"
+                    latest(status) as "Status"
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: CONNECTIVITY CHECKS                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Recent Connectivity Events</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:validation
+            | sort - _time
+            | head 10
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: INGESTION CONFIGURATION                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Ingestion Configuration</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:input
+            | stats latest(index) as "Target Index"
+                    latest(interval) as "Collection Interval"
+                    latest(enabled) as "Input Enabled"
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
