@@ -1,22 +1,36 @@
 <!--
 =============================================================================
- File: default/data/ui/views/setup.xml
-
+ default/data/ui/views/setup.xml
  Sandfly Security for Splunk App
- Full Setup Wizard
+ Setup Wizard
+=============================================================================
 
- This wizard is the SINGLE authoritative configuration surface for the app.
- All configuration previously handled by configuration.xml is implemented here.
+SETUP CONTRACT (OPERATOR EXPERIENCE)
 
- Covers:
-   - Account / Authentication
-   - Proxy configuration
-   - Data ingestion configuration
-   - Logging configuration
-   - Validation and finalization
+This setup wizard performs the complete configuration of the
+Sandfly Security for Splunk App.
+
+From the user’s perspective, the setup wizard:
+
+- Validates connectivity to the Sandfly Security server
+- Authenticates using provided credentials
+- Verifies required Sandfly API roles based on selected data collectors
+- Creates the specified Splunk index if it does not already exist
+- Stores credentials securely
+- Enables the selected data collectors
+- Initializes required checkpoints for streaming data
+- Completes setup only on success, or fails with clear errors
+
+No manual configuration is required after this wizard completes.
+If setup finishes successfully, the app is fully operational.
+
+All actions performed during setup are enforced as part of the
+setup process. The user is guided step-by-step and cannot complete
+setup in a partially configured or invalid state.
 
 =============================================================================
 -->
+
 
 <form version="1.1" hideEdit="true" hideTitle="false">
 
