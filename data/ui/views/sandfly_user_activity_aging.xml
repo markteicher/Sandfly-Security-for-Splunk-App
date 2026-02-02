@@ -1,0 +1,235 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_user_activity_aging.xml
+ Sandfly Security for Splunk App
+ User Activity, Aging, and Access Hygiene Dashboard
+=============================================================================
+
+PURPOSE
+
+This dashboard provides a comprehensive view of Sandfly user account
+activity, aging, and access hygiene. It is designed to support:
+
+- Executive oversight of identity risk
+- Security governance and access reviews
+- Detection of dormant, stale, and high-risk accounts
+- Compliance and audit readiness
+
+This view is derived exclusively from:
+  GET /v4/users   → sourcetype=sandfly:users
+
+No inferred fields. No assumptions. All calculations are explicit.
+
+=============================================================================
+
+KEY QUESTIONS ANSWERED
+
+- How many users exist and how active are they?
+- Which users have not logged in recently — or ever?
+- Are privileged accounts inactive or misconfigured?
+- Are new admins appearing without review?
+- Which accounts require immediate review?
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>User Activity & Aging</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: EXECUTIVE SUMMARY METRICS                                -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>👤 Total Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | stats count as total_users
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>✅ Active (≤ 30 days)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S")
+            | eval days_since_login=(now()-last_login_epoch)/86400
+            | where days_since_login <= 30
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>⚠️ Dormant (31–90 days)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S")
+            | eval days_since_login=(now()-last_login_epoch)/86400
+            | where days_since_login > 30 AND days_since_login <= 90
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🚨 Stale (&gt; 90 days)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S")
+            | eval days_since_login=(now()-last_login_epoch)/86400
+            | where days_since_login > 90
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>❌ Never Logged In</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | where isnull(last_login_date) OR last_login_date=""
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: HIGH-RISK ACCOUNT INDICATORS                              -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🔥 Privileged + Inactive</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S")
+            | eval days_since_login=round((now()-last_login_epoch)/86400,0)
+            | where roles="admin" AND (isnull(days_since_login) OR days_since_login > 30)
+            | table username email roles sso last_login_date days_since_login
+            | sort - days_since_login
+          </query>
+        </search>
+      </table>
+    </panel>
+
+    <panel>
+      <title>🔓 SSO Disabled + Privileged</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | where sso=false AND (roles="admin" OR roles="api_result_read" OR roles="api_scan")
+            | table username email roles sso created_date last_login_date
+            | sort username
+          </query>
+        </search>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: ACCOUNT AGE & ACTIVITY DRIFT                              -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🕒 Account Aging Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S")
+            | eval account_age_days=round((now()-created_epoch)/86400,0)
+            | eval age_bucket=case(
+                account_age_days <= 30,"0–30",
+                account_age_days <= 60,"31–60",
+                account_age_days <= 90,"61–90",
+                account_age_days <= 180,"91–180",
+                account_age_days <= 365,"181–365",
+                account_age_days > 365,">365"
+              )
+            | stats count by age_bucket
+          </query>
+        </search>
+        <option name="charting.chart">column</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>🆕 New Admins (Last 90 Days)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S")
+            | eval account_age_days=(now()-created_epoch)/86400
+            | where roles="admin" AND account_age_days <= 90
+            | table username email roles created_date sso
+            | sort created_date
+          </query>
+        </search>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: DETAILED REVIEW TABLE                                    -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📋 User Review Queue</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S")
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S")
+            | eval account_age_days=round((now()-created_epoch)/86400,0)
+            | eval days_since_login=round((now()-last_login_epoch)/86400,0)
+            | eval review_flag=case(
+                isnull(last_login_date),"❌ Never Logged In",
+                days_since_login > 180,"🚨 Long Inactive",
+                days_since_login > 90,"⚠️ Review Needed",
+                true(),"OK"
+              )
+            | table username email roles sso created_date last_login_date account_age_days days_since_login review_flag
+            | sort - days_since_login
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+</dashboard>
