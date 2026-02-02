@@ -1,0 +1,109 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_threatfeed_trends.xml
+ Sandfly Security for Splunk App
+ Threat Feed Coverage & Risk Trends
+=============================================================================
+
+PURPOSE
+
+Executive trend analysis of Sandfly Threat Feed coverage and risk posture
+over time.
+
+This view highlights directional change (DoD, WoW, QoQ, YoY) rather than
+point-in-time configuration, enabling leadership to detect degradation
+or improvement in threat intelligence posture.
+
+Derived entirely from sandfly:threatfeeds data.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Threat Feed Trends</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: FEED HEALTH OVER TIME                                   -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>Enabled vs Disabled Feeds Over Time</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | timechart span=1d
+                count(eval(active=true)) as Enabled
+                count(eval(active=false)) as Disabled
+          </query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.legend.placement">bottom</option>
+      </chart>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: FEED RISK TREND                                         -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>Feeds At Risk Over Time</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | spath
+            | eval last_update_epoch=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%QZ")
+            | eval age_days=(now()-last_update_epoch)/86400
+            | eval at_risk=if(active=false OR age_days&gt;7 OR last_update_message!="",1,0)
+            | timechart span=1d sum(at_risk) as "Feeds At Risk"
+          </query>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: EXECUTIVE DELTAS                                        -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>Threat Feed Risk Deltas</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:threatfeeds
+            | spath
+            | eval last_update_epoch=strptime(last_update,"%Y-%m-%dT%H:%M:%S.%QZ")
+            | eval age_days=(now()-last_update_epoch)/86400
+            | eval at_risk=if(active=false OR age_days&gt;7 OR last_update_message!="",1,0)
+            | timechart span=1d sum(at_risk) as risk_count
+            | eval DoD = risk_count - lag(risk_count,1)
+            | eval WoW = risk_count - lag(risk_count,7)
+            | eval QoQ = risk_count - lag(risk_count,90)
+            | eval YoY = risk_count - lag(risk_count,365)
+            | tail 1
+            | table risk_count DoD WoW QoQ YoY
+            | rename
+                risk_count as "Current Feeds At Risk"
+                DoD as "Day over Day"
+                WoW as "Week over Week"
+                QoQ as "Quarter over Quarter"
+                YoY as "Year over Year"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+</dashboard>
