@@ -2,22 +2,24 @@
 =============================================================================
  default/data/ui/views/sandfly_users.xml
  Sandfly Security for Splunk App
- Users Overview
+ Users & Access Overview
 =============================================================================
 
 PURPOSE
 
-Displays Sandfly user accounts ingested into Splunk, including:
-- Username and full name
-- Email address
-- Roles assigned
-- Last login time and IP
-- Account status indicators
+Displays all Sandfly users retrieved from the /v4/users API endpoint and
+ingested into Splunk as sandfly:users events.
 
-Data source:
-- /v4/auth, /v4/users (as ingested by sandfly_input.py)
-- sourcetype: sandfly:users
+This view supports both executive oversight and operational review by
+answering:
 
+- Who has access to Sandfly?
+- What roles are assigned?
+- Are users authenticating via SSO?
+- When did users last log in?
+- Are there failed login patterns?
+
+All fields displayed are sourced directly from the Sandfly API response.
 =============================================================================
 -->
 
@@ -25,7 +27,7 @@ Data source:
   <label>Users</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: USER COUNTS                                              -->
+  <!-- ROW 1: EXECUTIVE SUMMARY                                        -->
   <!-- =============================================================== -->
   <row>
     <panel>
@@ -34,6 +36,21 @@ Data source:
         <search>
           <query>
             index=* sourcetype=sandfly:users
+            | stats dc(username)
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>SSO Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | search sso=true
             | stats count
           </query>
         </search>
@@ -43,7 +60,27 @@ Data source:
     </panel>
 
     <panel>
-      <title>Users by Role</title>
+      <title>Users with Failed Logins</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | search logins_failed_count &gt; 0
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: ROLE DISTRIBUTION                                        -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>User Roles Distribution</title>
       <chart>
         <search>
           <query>
@@ -59,24 +96,25 @@ Data source:
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: USER DIRECTORY                                           -->
+  <!-- ROW 3: USER DETAILS                                             -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Sandfly User Accounts</title>
+      <title>User Accounts</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | eval roles=mvjoin(roles, ", ")
             | table
                 username
                 full_name
                 email
                 roles
+                sso
                 last_login_date
                 last_login_ip
-                sso
+                logins_failed_count
+                created_date
             | sort username
           </query>
         </search>
@@ -87,23 +125,21 @@ Data source:
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: RECENT LOGIN ACTIVITY                                    -->
+  <!-- ROW 4: FAILED LOGIN CONTEXT                                     -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Recent User Login Activity</title>
+      <title>Failed Login Details</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | where isnotnull(last_login_date)
+            | search logins_failed_count &gt; 0
             | table
-                last_login_date
                 username
-                email
-                last_login_ip
-            | sort - last_login_date
-            | head 20
+                logins_failed_count
+                logins_failed
+            | sort - logins_failed_count
           </query>
         </search>
         <option name="wrap">true</option>
