@@ -1,0 +1,113 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_drift_profiles.xml
+ Sandfly Security for Splunk App
+ Drift Detection Profiles
+=============================================================================
+
+PURPOSE
+
+Displays Drift Detection profiles used by Sandfly to detect configuration
+and behavioral changes across hosts. This view surfaces profile inventory,
+profile status, and recent drift-related activity.
+
+Data source:
+- Drift profiles API
+- sourcetype: sandfly:resultprofiles
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Drift Detection Profiles</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: PROFILE COUNTS                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total Drift Profiles</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:resultprofiles
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Profiles with Auto Drift Enabled</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:resultprofiles
+            | search autodrift=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: PROFILE INVENTORY                                      -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Drift Profiles</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:resultprofiles
+            | table
+                _time
+                id
+                name
+                sandfly
+                autodrift
+                created_date
+                updated_date
+            | sort name
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: RECENT DRIFT RESULTS                                   -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Recent Drift Results</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results
+            | search result_type=alert
+            | search sandfly=*drift*
+            | sort - _time
+            | table
+                _time
+                host
+                sandfly
+                message
+                severity
+            | head 50
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
