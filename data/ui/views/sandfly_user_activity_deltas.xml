@@ -1,0 +1,508 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_user_activity_deltas.xml
+ Sandfly Security for Splunk App
+ User Activity Deltas (DoD / WoW / MoM)
+=============================================================================
+
+PURPOSE
+
+This dashboard provides executive-friendly change metrics (deltas) for Sandfly
+user activity and access posture over time, derived from Sandfly /v4/users data.
+
+This view answers:
+
+- How many users exist today, and how is that changing (DoD / WoW / MoM)?
+- Are admin users increasing?
+- Are SSO-disabled accounts increasing (higher risk)?
+- Are never-logged-in accounts accumulating?
+- How is inactivity trending (30/60/90/180/365 days)?
+- What are the highest-risk user conditions right now?
+
+DATA SOURCE
+
+- /v4/users  → sourcetype=sandfly:users
+  Expected event shape (per user record):
+    created_date (ISO 8601)
+    last_login_date (ISO 8601 or null/empty)
+    last_login_ip
+    email
+    full_name
+    roles (array)
+    sso (boolean)
+    username
+
+NOTES
+
+- All time math is performed in Splunk SPL using explicit time windows.
+- Deltas compare current window vs previous window:
+    DoD:  last 24h vs prior 24h
+    WoW:  last 7d  vs prior 7d
+    MoM:  last 30d vs prior 30d
+- This dashboard assumes /v4/users ingestion occurs regularly (e.g., scheduled).
+- SPL uses explicit spath everywhere for nested/JSON fields.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Users — Activity Deltas</label>
+
+  <description>
+    Executive change metrics for Sandfly user posture: totals, admins, SSO-disabled,
+    never-logged-in, and inactivity drift (DoD / WoW / MoM), derived from sandfly:users.
+  </description>
+
+  <!-- =================================================================== -->
+  <!-- BASELINE: NORMALIZE USER FIELDS                                    -->
+  <!-- =================================================================== -->
+  <!-- The following "normalization block" is repeated in searches:
+       - spath extracts fields from JSON
+       - created_epoch and last_login_epoch computed
+       - role flags computed
+       - never_logged_in flag computed
+  -->
+
+  <!-- =================================================================== -->
+  <!-- ROW 1: EXECUTIVE KPI DELTAS (DoD / WoW / MoM)                       -->
+  <!-- =================================================================== -->
+  <row>
+
+    <!-- TOTAL USERS DELTA -->
+    <panel>
+      <title>👤 Total Users (DoD / WoW / MoM)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval now_epoch=now()
+
+            | eval in_dod = if(created_epoch &gt;= now_epoch-86400, 1, 0)
+            | eval in_prev_dod = if(created_epoch &gt;= now_epoch-172800 AND created_epoch &lt; now_epoch-86400, 1, 0)
+
+            | eval in_wow = if(created_epoch &gt;= now_epoch-604800, 1, 0)
+            | eval in_prev_wow = if(created_epoch &gt;= now_epoch-1209600 AND created_epoch &lt; now_epoch-604800, 1, 0)
+
+            | eval in_mom = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval in_prev_mom = if(created_epoch &gt;= now_epoch-5184000 AND created_epoch &lt; now_epoch-2592000, 1, 0)
+
+            | stats
+                count as total_users
+                sum(in_dod) as new_users_dod
+                sum(in_prev_dod) as new_users_prev_dod
+                sum(in_wow) as new_users_wow
+                sum(in_prev_wow) as new_users_prev_wow
+                sum(in_mom) as new_users_mom
+                sum(in_prev_mom) as new_users_prev_mom
+
+            | eval delta_dod = new_users_dod - new_users_prev_dod
+            | eval delta_wow = new_users_wow - new_users_prev_wow
+            | eval delta_mom = new_users_mom - new_users_prev_mom
+
+            | eval delta_dod_icon = case(delta_dod&gt;0,"▲", delta_dod&lt;0,"▼", 1=1,"■")
+            | eval delta_wow_icon = case(delta_wow&gt;0,"▲", delta_wow&lt;0,"▼", 1=1,"■")
+            | eval delta_mom_icon = case(delta_mom&gt;0,"▲", delta_mom&lt;0,"▼", 1=1,"■")
+
+            | eval DoD = tostring(delta_dod_icon)." ".tostring(delta_dod)
+            | eval WoW = tostring(delta_wow_icon)." ".tostring(delta_wow)
+            | eval MoM = tostring(delta_mom_icon)." ".tostring(delta_mom)
+
+            | table total_users DoD WoW MoM new_users_dod new_users_wow new_users_mom
+            | rename
+                total_users as "Current Total"
+                new_users_dod as "New (24h)"
+                new_users_wow as "New (7d)"
+                new_users_mom as "New (30d)"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+    <!-- ADMIN USERS DELTA -->
+    <panel>
+      <title>🔐 Admin Users (DoD / WoW / MoM)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval now_epoch=now()
+
+            | eval roles_json=coalesce(roles,"[]")
+            | eval is_admin = if(match(tostring(roles_json),"admin"),1,0)
+
+            | eval in_dod = if(created_epoch &gt;= now_epoch-86400, 1, 0)
+            | eval in_prev_dod = if(created_epoch &gt;= now_epoch-172800 AND created_epoch &lt; now_epoch-86400, 1, 0)
+
+            | eval in_wow = if(created_epoch &gt;= now_epoch-604800, 1, 0)
+            | eval in_prev_wow = if(created_epoch &gt;= now_epoch-1209600 AND created_epoch &lt; now_epoch-604800, 1, 0)
+
+            | eval in_mom = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval in_prev_mom = if(created_epoch &gt;= now_epoch-5184000 AND created_epoch &lt; now_epoch-2592000, 1, 0)
+
+            | stats
+                sum(is_admin) as admin_users
+                sum(eval(is_admin*in_dod)) as new_admin_dod
+                sum(eval(is_admin*in_prev_dod)) as new_admin_prev_dod
+                sum(eval(is_admin*in_wow)) as new_admin_wow
+                sum(eval(is_admin*in_prev_wow)) as new_admin_prev_wow
+                sum(eval(is_admin*in_mom)) as new_admin_mom
+                sum(eval(is_admin*in_prev_mom)) as new_admin_prev_mom
+
+            | eval delta_dod = new_admin_dod - new_admin_prev_dod
+            | eval delta_wow = new_admin_wow - new_admin_prev_wow
+            | eval delta_mom = new_admin_mom - new_admin_prev_mom
+
+            | eval delta_dod_icon = case(delta_dod&gt;0,"▲", delta_dod&lt;0,"▼", 1=1,"■")
+            | eval delta_wow_icon = case(delta_wow&gt;0,"▲", delta_wow&lt;0,"▼", 1=1,"■")
+            | eval delta_mom_icon = case(delta_mom&gt;0,"▲", delta_mom&lt;0,"▼", 1=1,"■")
+
+            | eval DoD = tostring(delta_dod_icon)." ".tostring(delta_dod)
+            | eval WoW = tostring(delta_wow_icon)." ".tostring(delta_wow)
+            | eval MoM = tostring(delta_mom_icon)." ".tostring(delta_mom)
+
+            | table admin_users DoD WoW MoM new_admin_dod new_admin_wow new_admin_mom
+            | rename
+                admin_users as "Current Admins"
+                new_admin_dod as "New Admins (24h)"
+                new_admin_wow as "New Admins (7d)"
+                new_admin_mom as "New Admins (30d)"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <row>
+
+    <!-- SSO DISABLED DELTA -->
+    <panel>
+      <title>🔓 SSO Disabled Users (DoD / WoW / MoM)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval now_epoch=now()
+
+            | eval sso_bool=case(isnull(sso),null(), sso="true",1, sso="false",0, 1=1, tonumber(sso))
+            | eval sso_disabled = if(sso_bool=0,1,0)
+
+            | eval in_dod = if(created_epoch &gt;= now_epoch-86400, 1, 0)
+            | eval in_prev_dod = if(created_epoch &gt;= now_epoch-172800 AND created_epoch &lt; now_epoch-86400, 1, 0)
+
+            | eval in_wow = if(created_epoch &gt;= now_epoch-604800, 1, 0)
+            | eval in_prev_wow = if(created_epoch &gt;= now_epoch-1209600 AND created_epoch &lt; now_epoch-604800, 1, 0)
+
+            | eval in_mom = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval in_prev_mom = if(created_epoch &gt;= now_epoch-5184000 AND created_epoch &lt; now_epoch-2592000, 1, 0)
+
+            | stats
+                sum(sso_disabled) as sso_disabled_users
+                sum(eval(sso_disabled*in_dod)) as new_sso_disabled_dod
+                sum(eval(sso_disabled*in_prev_dod)) as new_sso_disabled_prev_dod
+                sum(eval(sso_disabled*in_wow)) as new_sso_disabled_wow
+                sum(eval(sso_disabled*in_prev_wow)) as new_sso_disabled_prev_wow
+                sum(eval(sso_disabled*in_mom)) as new_sso_disabled_mom
+                sum(eval(sso_disabled*in_prev_mom)) as new_sso_disabled_prev_mom
+
+            | eval delta_dod = new_sso_disabled_dod - new_sso_disabled_prev_dod
+            | eval delta_wow = new_sso_disabled_wow - new_sso_disabled_prev_wow
+            | eval delta_mom = new_sso_disabled_mom - new_sso_disabled_prev_mom
+
+            | eval delta_dod_icon = case(delta_dod&gt;0,"▲", delta_dod&lt;0,"▼", 1=1,"■")
+            | eval delta_wow_icon = case(delta_wow&gt;0,"▲", delta_wow&lt;0,"▼", 1=1,"■")
+            | eval delta_mom_icon = case(delta_mom&gt;0,"▲", delta_mom&lt;0,"▼", 1=1,"■")
+
+            | eval DoD = tostring(delta_dod_icon)." ".tostring(delta_dod)
+            | eval WoW = tostring(delta_wow_icon)." ".tostring(delta_wow)
+            | eval MoM = tostring(delta_mom_icon)." ".tostring(delta_mom)
+
+            | table sso_disabled_users DoD WoW MoM new_sso_disabled_dod new_sso_disabled_wow new_sso_disabled_mom
+            | rename
+                sso_disabled_users as "Current SSO Disabled"
+                new_sso_disabled_dod as "New SSO Disabled (24h)"
+                new_sso_disabled_wow as "New SSO Disabled (7d)"
+                new_sso_disabled_mom as "New SSO Disabled (30d)"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+    <!-- NEVER LOGGED IN DELTA -->
+    <panel>
+      <title>🕳️ Never Logged In (DoD / WoW / MoM)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval now_epoch=now()
+
+            | eval never_logged_in = if(isnull(last_login_epoch),1,0)
+
+            | eval in_dod = if(created_epoch &gt;= now_epoch-86400, 1, 0)
+            | eval in_prev_dod = if(created_epoch &gt;= now_epoch-172800 AND created_epoch &lt; now_epoch-86400, 1, 0)
+
+            | eval in_wow = if(created_epoch &gt;= now_epoch-604800, 1, 0)
+            | eval in_prev_wow = if(created_epoch &gt;= now_epoch-1209600 AND created_epoch &lt; now_epoch-604800, 1, 0)
+
+            | eval in_mom = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval in_prev_mom = if(created_epoch &gt;= now_epoch-5184000 AND created_epoch &lt; now_epoch-2592000, 1, 0)
+
+            | stats
+                sum(never_logged_in) as never_logged_in_users
+                sum(eval(never_logged_in*in_dod)) as new_never_dod
+                sum(eval(never_logged_in*in_prev_dod)) as new_never_prev_dod
+                sum(eval(never_logged_in*in_wow)) as new_never_wow
+                sum(eval(never_logged_in*in_prev_wow)) as new_never_prev_wow
+                sum(eval(never_logged_in*in_mom)) as new_never_mom
+                sum(eval(never_logged_in*in_prev_mom)) as new_never_prev_mom
+
+            | eval delta_dod = new_never_dod - new_never_prev_dod
+            | eval delta_wow = new_never_wow - new_never_prev_wow
+            | eval delta_mom = new_never_mom - new_never_prev_mom
+
+            | eval delta_dod_icon = case(delta_dod&gt;0,"▲", delta_dod&lt;0,"▼", 1=1,"■")
+            | eval delta_wow_icon = case(delta_wow&gt;0,"▲", delta_wow&lt;0,"▼", 1=1,"■")
+            | eval delta_mom_icon = case(delta_mom&gt;0,"▲", delta_mom&lt;0,"▼", 1=1,"■")
+
+            | eval DoD = tostring(delta_dod_icon)." ".tostring(delta_dod)
+            | eval WoW = tostring(delta_wow_icon)." ".tostring(delta_wow)
+            | eval MoM = tostring(delta_mom_icon)." ".tostring(delta_mom)
+
+            | table never_logged_in_users DoD WoW MoM new_never_dod new_never_wow new_never_mom
+            | rename
+                never_logged_in_users as "Current Never Logged In"
+                new_never_dod as "New Never-Login (24h)"
+                new_never_wow as "New Never-Login (7d)"
+                new_never_mom as "New Never-Login (30d)"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =================================================================== -->
+  <!-- ROW 2: INACTIVITY DISTRIBUTION + DELTA                             -->
+  <!-- =================================================================== -->
+  <row>
+    <panel>
+      <title>⏳ Inactivity Buckets (Current)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval now_epoch=now()
+            | eval days_since_login = if(isnull(last_login_epoch), null(), round((now_epoch-last_login_epoch)/86400,0))
+
+            | eval bucket = case(
+                isnull(last_login_epoch), "Never Logged In",
+                days_since_login &lt;= 30, "0-30 days",
+                days_since_login &lt;= 60, "31-60 days",
+                days_since_login &lt;= 90, "61-90 days",
+                days_since_login &lt;= 180, "91-180 days",
+                days_since_login &lt;= 365, "181-365 days",
+                1=1, "365+ days"
+              )
+
+            | stats count as users by bucket
+            | eval sort_order=case(
+                bucket="0-30 days",1,
+                bucket="31-60 days",2,
+                bucket="61-90 days",3,
+                bucket="91-180 days",4,
+                bucket="181-365 days",5,
+                bucket="365+ days",6,
+                bucket="Never Logged In",7,
+                1=1,99
+              )
+            | sort sort_order
+            | fields - sort_order
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+    <panel>
+      <title>📉 Users Inactive &gt; 90 Days (DoD / WoW / MoM)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval now_epoch=now()
+
+            | eval inactive_90 = case(
+                isnull(last_login_epoch), 0,
+                (now_epoch-last_login_epoch) &gt; 7776000, 1,
+                1=1, 0
+              )
+
+            /* approximate delta by comparing user creation windows for inactive population */
+            | eval in_dod = if(created_epoch &gt;= now_epoch-86400, 1, 0)
+            | eval in_prev_dod = if(created_epoch &gt;= now_epoch-172800 AND created_epoch &lt; now_epoch-86400, 1, 0)
+
+            | eval in_wow = if(created_epoch &gt;= now_epoch-604800, 1, 0)
+            | eval in_prev_wow = if(created_epoch &gt;= now_epoch-1209600 AND created_epoch &lt; now_epoch-604800, 1, 0)
+
+            | eval in_mom = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval in_prev_mom = if(created_epoch &gt;= now_epoch-5184000 AND created_epoch &lt; now_epoch-2592000, 1, 0)
+
+            | stats
+                sum(inactive_90) as inactive_90_users
+                sum(eval(inactive_90*in_dod)) as inactive_90_dod
+                sum(eval(inactive_90*in_prev_dod)) as inactive_90_prev_dod
+                sum(eval(inactive_90*in_wow)) as inactive_90_wow
+                sum(eval(inactive_90*in_prev_wow)) as inactive_90_prev_wow
+                sum(eval(inactive_90*in_mom)) as inactive_90_mom
+                sum(eval(inactive_90*in_prev_mom)) as inactive_90_prev_mom
+
+            | eval delta_dod = inactive_90_dod - inactive_90_prev_dod
+            | eval delta_wow = inactive_90_wow - inactive_90_prev_wow
+            | eval delta_mom = inactive_90_mom - inactive_90_prev_mom
+
+            | eval delta_dod_icon = case(delta_dod&gt;0,"▲", delta_dod&lt;0,"▼", 1=1,"■")
+            | eval delta_wow_icon = case(delta_wow&gt;0,"▲", delta_wow&lt;0,"▼", 1=1,"■")
+            | eval delta_mom_icon = case(delta_mom&gt;0,"▲", delta_mom&lt;0,"▼", 1=1,"■")
+
+            | eval DoD = tostring(delta_dod_icon)." ".tostring(delta_dod)
+            | eval WoW = tostring(delta_wow_icon)." ".tostring(delta_wow)
+            | eval MoM = tostring(delta_mom_icon)." ".tostring(delta_mom)
+
+            | table inactive_90_users DoD WoW MoM
+            | rename inactive_90_users as "Current Inactive &gt;90d"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =================================================================== -->
+  <!-- ROW 3: HIGH-RISK USERS                                             -->
+  <!-- =================================================================== -->
+  <row>
+    <panel>
+      <title>🚨 High-Risk Users (Admin + API roles + SSO Disabled)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval roles_json=coalesce(roles,"[]")
+            | eval is_admin = if(match(tostring(roles_json),"admin"),1,0)
+            | eval has_api_role = if(match(tostring(roles_json),"api_"),1,0)
+
+            | eval sso_bool=case(isnull(sso),null(), sso="true",1, sso="false",0, 1=1, tonumber(sso))
+            | eval sso_disabled = if(sso_bool=0,1,0)
+
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval now_epoch=now()
+            | eval days_since_login = if(isnull(last_login_epoch), null(), round((now_epoch-last_login_epoch)/86400,0))
+
+            | where is_admin=1 AND has_api_role=1 AND sso_disabled=1
+
+            | eval risk_reason="Admin + API role + SSO disabled"
+            | table username email full_name roles sso last_login_date last_login_ip days_since_login risk_reason created_date
+            | sort - days_since_login
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =================================================================== -->
+  <!-- ROW 4: ACCESS DRIFT — NEW ADMINS (30/90 DAYS) + NEVER LOGGED IN     -->
+  <!-- =================================================================== -->
+  <row>
+    <panel>
+      <title>🧭 New Admins (Last 30 / 90 Days)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval now_epoch=now()
+
+            | eval roles_json=coalesce(roles,"[]")
+            | eval is_admin = if(match(tostring(roles_json),"admin"),1,0)
+            | where is_admin=1
+
+            | eval new_30 = if(created_epoch &gt;= now_epoch-2592000, 1, 0)
+            | eval new_90 = if(created_epoch &gt;= now_epoch-7776000, 1, 0)
+
+            | stats
+                sum(new_30) as "New Admins (30d)"
+                sum(new_90) as "New Admins (90d)"
+                count as "Total Admins"
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+    <panel>
+      <title>🧾 Accounts Created But Never Logged In</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval last_login_epoch=case(isnull(last_login_date) OR last_login_date="", null(),
+                                         1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ"))
+            | eval created_epoch=strptime(created_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval now_epoch=now()
+
+            | eval never_logged_in = if(isnull(last_login_epoch),1,0)
+            | where never_logged_in=1
+
+            | eval age_days = round((now_epoch-created_epoch)/86400,0)
+            | eval review_flag = if(age_days &gt;= 90, "✅ Review", "")
+
+            | table username email full_name roles sso created_date age_days review_flag
+            | sort - age_days
+            | head 50
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
