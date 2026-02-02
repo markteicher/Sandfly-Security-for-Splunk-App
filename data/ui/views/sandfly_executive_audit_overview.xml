@@ -1,0 +1,223 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_executive_audit_overview.xml
+ Sandfly Security for Splunk App
+ Executive Audit Log Overview
+=============================================================================
+
+PURPOSE
+
+Provides an executive-level view of Sandfly audit activity trends using
+all audit records ingested from the Sandfly API (/v4/audit).
+
+This view focuses on time-based change metrics rather than raw events and
+answers:
+
+- Is audit activity increasing or decreasing?
+- How does current activity compare to prior periods?
+- Are there abnormal shifts in operational or administrative behavior?
+
+All metrics are derived from sandfly:audit data only.
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Executive Audit Overview</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: CURRENT BASELINE                                         -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total Audit Events (Last 24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit earliest=-24h
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Unique Users (Last 24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit earliest=-24h
+            | stats dc(username)
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Unique Source IPs (Last 24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit earliest=-24h
+            | stats dc(ip_addr)
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: DAY / WEEK / MONTH COMPARISONS                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Day over Day (Audit Events)</title>
+      <table>
+        <search>
+          <query>
+            | eval period="today"
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-24h
+                | stats count as count
+                | eval period="Last 24h"
+              ]
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-48h latest=-24h
+                | stats count as count
+                | eval period="Previous 24h"
+              ]
+            | table period count
+          </query>
+        </search>
+      </table>
+    </panel>
+
+    <panel>
+      <title>Week over Week (Audit Events)</title>
+      <table>
+        <search>
+          <query>
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-7d
+                | stats count as count
+                | eval period="Last 7 days"
+              ]
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-14d latest=-7d
+                | stats count as count
+                | eval period="Previous 7 days"
+              ]
+            | table period count
+          </query>
+        </search>
+      </table>
+    </panel>
+
+    <panel>
+      <title>Month over Month (Audit Events)</title>
+      <table>
+        <search>
+          <query>
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-30d
+                | stats count as count
+                | eval period="Last 30 days"
+              ]
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-60d latest=-30d
+                | stats count as count
+                | eval period="Previous 30 days"
+              ]
+            | table period count
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: QUARTER / YEAR COMPARISONS                               -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Quarter over Quarter (Audit Events)</title>
+      <table>
+        <search>
+          <query>
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-90d
+                | stats count as count
+                | eval period="Last 90 days"
+              ]
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-180d latest=-90d
+                | stats count as count
+                | eval period="Previous 90 days"
+              ]
+            | table period count
+          </query>
+        </search>
+      </table>
+    </panel>
+
+    <panel>
+      <title>Year over Year (Audit Events)</title>
+      <table>
+        <search>
+          <query>
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-365d
+                | stats count as count
+                | eval period="Last 12 months"
+              ]
+            | append [
+                search index=* sourcetype=sandfly:audit earliest=-730d latest=-365d
+                | stats count as count
+                | eval period="Previous 12 months"
+              ]
+            | table period count
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: ACTIVITY COMPOSITION                                     -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Audit Activity by Record Type (30d)</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit earliest=-30d
+            | stats count by record_type
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Top Users by Audit Activity (30d)</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:audit earliest=-30d
+            | stats count by username
+            | sort - count
+            | head 10
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
