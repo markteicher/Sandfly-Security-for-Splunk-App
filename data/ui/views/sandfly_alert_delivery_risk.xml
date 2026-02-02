@@ -1,0 +1,205 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_alert_delivery_risk.xml
+ Sandfly Security for Splunk App
+ Alert Delivery Coverage & Risk Dashboard
+=============================================================================
+
+PURPOSE
+
+This dashboard provides visibility into the *operational reliability* of
+Sandfly alert delivery mechanisms. It focuses on whether alerts are routed
+to the correct recipients, how resilient those routes are, and where silent
+delivery failures may occur.
+
+
+EXECUTIVE QUESTIONS ANSWERED
+
+- Are all Sandfly alerts actually deliverable?
+- Who receives alerts, and is coverage redundant?
+- Where do we have single-recipient or misconfiguration risk?
+- Are alert delivery mechanisms tested and operational?
+
+DATA SOURCES
+
+- /v4/alerts/email        → sandfly:alerts:email
+- /v4/users               → sandfly:users
+- Derived SPL risk logic
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Alert Delivery Coverage & Risk</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: EXECUTIVE METRICS                                       -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📨 Total Email Alerts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🚨 Alerts With No Recipients</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath path=email_recipients{}
+            | eval recipient_count=mvcount(email_recipients)
+            | where recipient_count=0
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>⚠️ Single-Recipient Alerts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath path=email_recipients{}
+            | eval recipient_count=mvcount(email_recipients)
+            | where recipient_count=1
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🟢 Multi-Recipient Alerts</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath path=email_recipients{}
+            | eval recipient_count=mvcount(email_recipients)
+            | where recipient_count&gt;1
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="useColors">true</option>
+      </single>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: DELIVERY RISK BREAKDOWN                                 -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📊 Alert Delivery Risk Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath path=email_recipients{}
+            | eval recipient_count=mvcount(email_recipients)
+            | eval risk=case(
+                recipient_count=0, "🔴 High Risk",
+                recipient_count=1, "🟡 Medium Risk",
+                recipient_count&gt;1, "🟢 Low Risk"
+              )
+            | stats count by risk
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>📡 SMTP Server Concentration</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath path=mail_server
+            | stats count as alert_count by mail_server
+            | sort - alert_count
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: HIGH-RISK CONFIGURATIONS                                -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🚩 High-Risk Alert Configurations</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath
+            | eval recipient_count=mvcount(email_recipients)
+            | eval risk=case(
+                recipient_count=0, "🔴 No Recipients",
+                recipient_count=1, "🟡 Single Recipient"
+              )
+            | where risk!=""
+            | table name risk email_recipients mail_server mail_port mail_username
+            | sort risk
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: OPERATIONAL ACTIONABILITY                               -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📌 Alert Configurations Needing Review</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:alerts:email
+            | spath
+            | eval recipient_count=mvcount(email_recipients)
+            | where recipient_count&lt;2
+            | eval recommendation=case(
+                recipient_count=0, "Add recipients",
+                recipient_count=1, "Add redundancy"
+              )
+            | table name recipient_count recommendation
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+</dashboard>
