@@ -1,0 +1,165 @@
+<!--
+=============================================================================
+ File: default/data/ui/views/setup.xml
+
+ Sandfly Security for Splunk App
+ Full Setup Wizard
+
+ This wizard is the SINGLE authoritative configuration surface for the app.
+ All configuration previously handled by configuration.xml is implemented here.
+
+ Covers:
+   - Account / Authentication
+   - Proxy configuration
+   - Data ingestion configuration
+   - Logging configuration
+   - Validation and finalization
+
+=============================================================================
+-->
+
+<form version="1.1" hideEdit="true" hideTitle="false">
+
+  <label>Sandfly Security – Setup Wizard</label>
+
+  <description>
+    This wizard configures connectivity, authentication, data ingestion,
+    and logging for the Sandfly Security for Splunk App.
+  </description>
+
+  <!-- ================================================================ -->
+  <!-- Step 1: Sandfly Account / Authentication                          -->
+  <!-- ================================================================ -->
+
+  <fieldset submitButton="false">
+    <legend>Step 1 – Sandfly Account Configuration</legend>
+
+    <input type="text" token="server_url">
+      <label>Sandfly Server URL</label>
+      <help>
+        Base URL of the Sandfly Security server (no trailing slash).
+        Example: https://sandfly.company.com
+      </help>
+    </input>
+
+    <input type="dropdown" token="auth_method">
+      <label>Authentication Method</label>
+      <choice value="password">Username / Password</choice>
+      <choice value="token">SSO / API Token</choice>
+    </input>
+
+    <input type="text" token="username" depends="$auth_method$==password">
+      <label>Username</label>
+    </input>
+
+    <input type="password" token="password" depends="$auth_method$==password">
+      <label>Password</label>
+    </input>
+
+    <input type="password" token="api_token" depends="$auth_method$==token">
+      <label>API / SSO Token</label>
+    </input>
+  </fieldset>
+
+  <!-- ================================================================ -->
+  <!-- Step 2: Proxy Configuration                                      -->
+  <!-- ================================================================ -->
+
+  <fieldset submitButton="false">
+    <legend>Step 2 – Proxy Configuration (Optional)</legend>
+
+    <input type="dropdown" token="proxy_mode">
+      <label>Proxy Mode</label>
+      <choice value="none">No Proxy</choice>
+      <choice value="proxy">Proxy (No Authentication)</choice>
+      <choice value="proxy_auth">Proxy (Username / Password)</choice>
+    </input>
+
+    <input type="text" token="proxy_url" depends="$proxy_mode$!=none">
+      <label>Proxy URL</label>
+      <help>Example: http://proxy.company.com:8080</help>
+    </input>
+
+    <input type="text" token="proxy_username" depends="$proxy_mode$==proxy_auth">
+      <label>Proxy Username</label>
+    </input>
+
+    <input type="password" token="proxy_password" depends="$proxy_mode$==proxy_auth">
+      <label>Proxy Password</label>
+    </input>
+  </fieldset>
+
+  <!-- ================================================================ -->
+  <!-- Step 3: Data Ingestion Configuration                              -->
+  <!-- ================================================================ -->
+
+  <fieldset submitButton="false">
+    <legend>Step 3 – Data Ingestion</legend>
+
+    <input type="text" token="target_index">
+      <label>Target Index</label>
+      <help>
+        Enter the name of the Splunk index where Sandfly data will be stored.
+        The index must already exist.
+      </help>
+    </input>
+
+    <input type="dropdown" token="enable_ingest">
+      <label>Enable Data Ingestion</label>
+      <choice value="true">Yes</choice>
+      <choice value="false">No</choice>
+    </input>
+
+    <input type="text" token="collection_interval">
+      <label>Collection Interval (seconds)</label>
+      <default>300</default>
+    </input>
+  </fieldset>
+
+  <!-- ================================================================ -->
+  <!-- Step 4: Logging Configuration                                    -->
+  <!-- ================================================================ -->
+
+  <fieldset submitButton="false">
+    <legend>Step 4 – Logging</legend>
+
+    <input type="dropdown" token="log_level">
+      <label>Log Level</label>
+      <choice value="DEBUG">DEBUG</choice>
+      <choice value="INFO">INFO</choice>
+      <choice value="WARN">WARN</choice>
+      <choice value="ERROR">ERROR</choice>
+    </input>
+
+    <input type="dropdown" token="enable_diagnostics">
+      <label>Enable Diagnostic Logging</label>
+      <choice value="false">No</choice>
+      <choice value="true">Yes</choice>
+    </input>
+  </fieldset>
+
+  <!-- ================================================================ -->
+  <!-- Step 5: Finalize / Validate                                      -->
+  <!-- ================================================================ -->
+
+  <fieldset submitButton="true">
+    <legend>Step 5 – Validate and Save</legend>
+
+    <html>
+      <p>
+        When you click <strong>Save Configuration</strong>, the app will:
+      </p>
+      <ul>
+        <li>Validate connectivity and authentication</li>
+        <li>Store credentials securely</li>
+        <li>Create and enable Sandfly modular inputs</li>
+        <li>Persist logging and proxy configuration</li>
+      </ul>
+    </html>
+  </fieldset>
+
+  <submit>
+    <label>Save Configuration</label>
+  </submit>
+
+</form>
