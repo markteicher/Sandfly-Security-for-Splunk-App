@@ -5,7 +5,7 @@
  Setup Wizard
 =============================================================================
 
-SETUP CONTRACT (OPERATOR EXPERIENCE)
+SETUP WIZARD
 
 This setup wizard performs the complete configuration of the
 Sandfly Security for Splunk App.
@@ -19,161 +19,170 @@ From the user’s perspective, the setup wizard:
 - Stores credentials securely
 - Enables the selected data collectors
 - Initializes required checkpoints for streaming data
+- Enables operational logging
 - Completes setup only on success, or fails with clear errors
 
 No manual configuration is required after this wizard completes.
-If setup finishes successfully, the app is fully operational.
-
-All actions performed during setup are enforced as part of the
-setup process. The user is guided step-by-step and cannot complete
-setup in a partially configured or invalid state.
-
 =============================================================================
 -->
 
-
-<form version="1.1" hideEdit="true" hideTitle="false">
-
-  <label>Sandfly Security – Setup Wizard</label>
+<form version="1.1" type="wizard">
+  <label>Sandfly Security – Setup</label>
 
   <description>
-    This wizard configures connectivity, authentication, data ingestion,
-    and logging for the Sandfly Security for Splunk App.
+    This wizard configures connectivity, storage, logging, and data
+    collection for the Sandfly Security for Splunk App.
   </description>
 
-  <!-- ================================================================ -->
-  <!-- Step 1: Sandfly Account / Authentication                          -->
-  <!-- ================================================================ -->
+  <!-- =============================================================== -->
+  <!-- STEP 1: SANDFLY SERVER CONNECTION                                -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Sandfly Server Connection</legend>
 
-  <fieldset submitButton="false">
-    <legend>Step 1 – Sandfly Account Configuration</legend>
-
-    <input type="text" token="server_url">
+    <input type="text" token="sandfly_url">
       <label>Sandfly Server URL</label>
-      <help>
-        Base URL of the Sandfly Security server (no trailing slash).
-        Example: https://sandfly.company.com
-      </help>
+      <help>Example: https://sandfly.example.com</help>
+      <validation>
+        <regex>^(?i)https?://.+</regex>
+        <message>URL must begin with http:// or https://</message>
+      </validation>
     </input>
 
-    <input type="dropdown" token="auth_method">
-      <label>Authentication Method</label>
-      <choice value="password">Username / Password</choice>
-      <choice value="token">SSO / API Token</choice>
-    </input>
-
-    <input type="text" token="username" depends="$auth_method$==password">
+    <input type="text" token="sandfly_username">
       <label>Username</label>
     </input>
 
-    <input type="password" token="password" depends="$auth_method$==password">
+    <input type="password" token="sandfly_password">
       <label>Password</label>
     </input>
-
-    <input type="password" token="api_token" depends="$auth_method$==token">
-      <label>API / SSO Token</label>
-    </input>
   </fieldset>
 
-  <!-- ================================================================ -->
-  <!-- Step 2: Proxy Configuration                                      -->
-  <!-- ================================================================ -->
-
-  <fieldset submitButton="false">
-    <legend>Step 2 – Proxy Configuration (Optional)</legend>
-
-    <input type="dropdown" token="proxy_mode">
-      <label>Proxy Mode</label>
-      <choice value="none">No Proxy</choice>
-      <choice value="proxy">Proxy (No Authentication)</choice>
-      <choice value="proxy_auth">Proxy (Username / Password)</choice>
-    </input>
-
-    <input type="text" token="proxy_url" depends="$proxy_mode$!=none">
-      <label>Proxy URL</label>
-      <help>Example: http://proxy.company.com:8080</help>
-    </input>
-
-    <input type="text" token="proxy_username" depends="$proxy_mode$==proxy_auth">
-      <label>Proxy Username</label>
-    </input>
-
-    <input type="password" token="proxy_password" depends="$proxy_mode$==proxy_auth">
-      <label>Proxy Password</label>
-    </input>
-  </fieldset>
-
-  <!-- ================================================================ -->
-  <!-- Step 3: Data Ingestion Configuration                              -->
-  <!-- ================================================================ -->
-
-  <fieldset submitButton="false">
-    <legend>Step 3 – Data Ingestion</legend>
+  <!-- =============================================================== -->
+  <!-- STEP 2: SPLUNK INDEX CONFIGURATION                               -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Splunk Index</legend>
 
     <input type="text" token="target_index">
       <label>Target Index</label>
       <help>
         Enter the name of the Splunk index where Sandfly data will be stored.
-        The index must already exist.
+        The index will be created during setup if it does not already exist.
       </help>
     </input>
-
-    <input type="dropdown" token="enable_ingest">
-      <label>Enable Data Ingestion</label>
-      <choice value="true">Yes</choice>
-      <choice value="false">No</choice>
-    </input>
-
-    <input type="text" token="collection_interval">
-      <label>Collection Interval (seconds)</label>
-      <default>300</default>
-    </input>
   </fieldset>
 
-  <!-- ================================================================ -->
-  <!-- Step 4: Logging Configuration                                    -->
-  <!-- ================================================================ -->
+  <!-- =============================================================== -->
+  <!-- STEP 3: OPERATIONAL LOGGING                                     -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Operational Logging</legend>
 
-  <fieldset submitButton="false">
-    <legend>Step 4 – Logging</legend>
-
-    <input type="dropdown" token="log_level">
-      <label>Log Level</label>
-      <choice value="DEBUG">DEBUG</choice>
-      <choice value="INFO">INFO</choice>
-      <choice value="WARN">WARN</choice>
-      <choice value="ERROR">ERROR</choice>
+    <input type="dropdown" token="enable_logging">
+      <label>Enable Operational Logging</label>
+      <choice value="true">Enabled</choice>
+      <choice value="false">Disabled</choice>
+      <default>true</default>
     </input>
-
-    <input type="dropdown" token="enable_diagnostics">
-      <label>Enable Diagnostic Logging</label>
-      <choice value="false">No</choice>
-      <choice value="true">Yes</choice>
-    </input>
-  </fieldset>
-
-  <!-- ================================================================ -->
-  <!-- Step 5: Finalize / Validate                                      -->
-  <!-- ================================================================ -->
-
-  <fieldset submitButton="true">
-    <legend>Step 5 – Validate and Save</legend>
 
     <html>
       <p>
-        When you click <strong>Save Configuration</strong>, the app will:
+        When enabled, the app writes informational messages to Splunk
+        internal logs to support troubleshooting and operational monitoring.
       </p>
-      <ul>
-        <li>Validate connectivity and authentication</li>
-        <li>Store credentials securely</li>
-        <li>Create and enable Sandfly modular inputs</li>
-        <li>Persist logging and proxy configuration</li>
-      </ul>
+    </html>
+  </fieldset>
+
+  <!-- =============================================================== -->
+  <!-- STEP 4: PROXY CONFIGURATION                                     -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Proxy Configuration (Optional)</legend>
+
+    <input type="dropdown" token="proxy_mode">
+      <label>Proxy Mode</label>
+      <choice value="none">No Proxy</choice>
+      <choice value="proxy">Proxy (No Authentication)</choice>
+      <choice value="proxy_auth">Proxy (With Authentication)</choice>
+      <default>none</default>
+    </input>
+
+    <input type="text" token="proxy_url" depends="$proxy_mode!=none$">
+      <label>Proxy URL</label>
+    </input>
+
+    <input type="text" token="proxy_username" depends="$proxy_mode=proxy_auth$">
+      <label>Proxy Username</label>
+    </input>
+
+    <input type="password" token="proxy_password" depends="$proxy_mode=proxy_auth$">
+      <label>Proxy Password</label>
+    </input>
+  </fieldset>
+
+  <!-- =============================================================== -->
+  <!-- STEP 5: DATA COLLECTION SELECTION                                -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Data Collection</legend>
+
+    <input type="checkbox" token="collectors">
+      <label>Select Data to Collect</label>
+
+      <!-- Core inventory -->
+      <choice value="hosts">Hosts</choice>
+      <choice value="hosts_info">Host Details</choice>
+      <choice value="users">Users</choice>
+      <choice value="credentials">Credentials</choice>
+      <choice value="jumphosts">Jump Hosts</choice>
+
+      <!-- Results / Drift -->
+      <choice value="results">Results Stream</choice>
+      <choice value="results_timeline">Results Timeline</choice>
+      <choice value="results_summary">Results Summary</choice>
+      <choice value="resultprofiles">Drift Detection Profiles</choice>
+
+      <!-- Sandflies -->
+      <choice value="sandflies">Sandflies</choice>
+
+      <!-- SSH Hunter -->
+      <choice value="sshhunter_summary">SSH Hunter Summary</choice>
+      <choice value="sshhunter_keys">SSH Hunter Keys</choice>
+      <choice value="sshhunter_users">SSH Hunter Users</choice>
+      <choice value="sshhunter_hosts">SSH Hunter Hosts</choice>
+
+      <!-- Operations / Admin -->
+      <choice value="scan">Scanning</choice>
+      <choice value="schedule">Schedules</choice>
+      <choice value="alerts_email">Email Alerts</choice>
+      <choice value="alerts_syslog">Syslog Alerts</choice>
+      <choice value="notifications">Notifications</choice>
+      <choice value="audit">Audit Logs</choice>
+      <choice value="reports">Reports</choice>
+
+      <default>hosts</default>
+      <default>users</default>
+      <default>results</default>
+      <default>audit</default>
+    </input>
+  </fieldset>
+
+  <!-- =============================================================== -->
+  <!-- STEP 6: COMPLETE SETUP                                          -->
+  <!-- =============================================================== -->
+  <fieldset>
+    <legend>Complete Setup</legend>
+
+    <html>
+      <p>
+        Click <b>Finish</b> to validate configuration, create required
+        resources, enable logging, and begin data collection.
+      </p>
     </html>
   </fieldset>
 
   <submit>
-    <label>Save Configuration</label>
+    <label>Finish Setup</label>
   </submit>
-
 </form>
