@@ -1,0 +1,143 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_roles_permissions.xml
+ Sandfly Security for Splunk App
+ Roles and Permissions Overview
+=============================================================================
+
+PURPOSE
+
+Provides visibility into:
+- Sandfly user population
+- Role distribution
+- Effective permissions per role based on the Sandfly API Role Security Matrix
+
+This view mirrors the Sandfly authorization model and is intended for
+executive, security, and audit audiences.
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Roles & Permissions</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: USER & ROLE SUMMARY                                      -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>Total Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | stats count as total_users
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="numberPrecision">0</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Administrators</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles="admin"
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>API Scan Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles="api_scan"
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Result Read Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles="api_result_read"
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Standard Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | mvexpand roles
+            | search roles="user"
+            | stats count
+          </query>
+        </search>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: ROLE PERMISSIONS MATRIX                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Effective Permissions by Role</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:role_permissions
+            | eval "View Results"=if(view_results="true","✅","❌")
+            | eval "Run Scans"=if(run_scans="true","✅","❌")
+            | eval "Manage Hosts"=if(manage_hosts="true","✅","❌")
+            | eval "Manage Credentials"=if(manage_credentials="true","✅","❌")
+            | eval "Manage Notifications"=if(manage_notifications="true","✅","❌")
+            | eval "View Audit Logs"=if(view_audit="true","✅","❌")
+            | eval "System Configuration"=if(system_config="true","✅","❌")
+            | eval "License Management"=if(manage_license="true","✅","❌")
+            | table role
+                "View Results"
+                "Run Scans"
+                "Manage Hosts"
+                "Manage Credentials"
+                "Manage Notifications"
+                "View Audit Logs"
+                "System Configuration"
+                "License Management"
+            | sort role
+            | rename role as "Role"
+          </query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
