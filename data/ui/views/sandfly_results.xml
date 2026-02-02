@@ -1,0 +1,132 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_results.xml
+ Sandfly Security for Splunk App
+ Results
+=============================================================================
+
+PURPOSE
+
+Displays Sandfly scan results including alerts, pass results, and errors.
+Provides operational visibility into detection activity and recent findings.
+
+Data source:
+- Sandfly results API
+- sourcetype: sandfly:results
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>Results</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: RESULT COUNTS                                            -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Total Results (24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results earliest=-24h
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Alerts (24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results earliest=-24h
+            | search result_type=alert
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Errors (24h)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results earliest=-24h
+            | search result_type=error
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: RESULT ACTIVITY                                          -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Results Over Time</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results
+            | timechart span=1h count
+          </query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.legend.placement">bottom</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>Results by Type (24h)</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results earliest=-24h
+            | stats count by result_type
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: RESULT DETAILS                                           -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Recent Results</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:results
+            | sort - _time
+            | table
+                _time
+                result_type
+                sandfly
+                host
+                severity
+                message
+            | head 50
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
