@@ -18,6 +18,7 @@
   <!-- Dashboard -->
   <collection label="Dashboard">
     <view name="sandfly_overview"/>
+    <view name="sandfly_executive_overview"/>
   </collection>
 
   <!-- Results -->
@@ -49,6 +50,7 @@
   <!-- Reports -->
   <collection label="Reports">
     <view name="sandfly_reports"/>
+    <view name="sandfly_host_snapshot"/>
   </collection>
 
   <!-- Scanning -->
@@ -81,11 +83,6 @@
   <!-- Sandflies -->
   <collection label="Sandflies">
     <view name="sandfly_sandflies"/>
-  </collection>
-
-  <!-- Whitelists -->
-  <collection label="Whitelists">
-    <view name="sandfly_whitelists"/>
   </collection>
 
   <!-- Operations -->
