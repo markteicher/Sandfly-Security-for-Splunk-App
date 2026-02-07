@@ -57,20 +57,6 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 #### Red Hat–based Distributions
 
-| Distribution | Specific Release | Kernel Version | Supported |
-|-------------|------------------|---------------|-----------|
-| RHEL | 6.0 – 6.10 | 2.6.32 | ✅ |
-| RHEL | 7.0 – 7.9 | 3.10 | ✅ |
-| RHEL | 8.0 – 8.10 | 4.18 | ✅ |
-| RHEL | 9.0 – 9.x | 5.14 | ✅ |
-| CentOS | 6.0 – 6.10 | 2.6.32 | ✅ |
-| CentOS | 7.0 – 7.9 | 3.10 | ✅ |
-| CentOS Stream | 8 | 4.18 | ✅ |
-| CentOS Stream | 9 | 5.14 | ✅ |
-| AlmaLinux | 8.x | 4.18 | ✅ |
-| AlmaLinux | 9.x | 5.14 | ✅ |
-| Rocky Linux | 8.x | 4.18 | ✅ |
-| Rocky Linux | 9.x | 5.14 | ✅ |
 
 ---
 
