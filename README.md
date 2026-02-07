@@ -177,26 +177,26 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 ---
 
+
 #### Debian / Ubuntu–based Distributions
 
 | Distribution | Specific Release | Kernel Version | Supported |
-|-------------|------------------|---------------|-----------|
-| Debian | 6 (Squeeze) | 2.6.32 | ✅ |
-| Debian | 7 (Wheezy) | 3.2 | ✅ |
-| Debian | 8 (Jessie) | 3.16 | ✅ |
-| Debian | 9 (Stretch) | 4.9 | ✅ |
-| Debian | 10 (Buster) | 4.19 | ✅ |
-| Debian | 11 (Bullseye) | 5.10 | ✅ |
-| Debian | 12 (Bookworm) | 6.1 | ✅ |
-| Ubuntu | 10.04 LTS | 2.6.32 | ✅ |
-| Ubuntu | 12.04 LTS | 3.2 | ✅ |
-| Ubuntu | 14.04 LTS | 3.13 | ✅ |
-| Ubuntu | 16.04 LTS | 4.4 | ✅ |
-| Ubuntu | 18.04 LTS | 4.15 | ✅ |
-| Ubuntu | 20.04 LTS | 5.4 | ✅ |
-| Ubuntu | 22.04 LTS | 5.15 | ✅ |
-| Ubuntu | 24.04 LTS | 6.8 | ✅ |
-
+|-------------|-----------------|---------------|-----------|
+| Debian      | 6 (Squeeze)     | 2.6.32        | ✅        |
+| Debian      | 7 (Wheezy)      | 3.2           | ✅        |
+| Debian      | 8 (Jessie)      | 3.16          | ✅        |
+| Debian      | 9 (Stretch)     | 4.9           | ✅        |
+| Debian      | 10 (Buster)     | 4.19          | ✅        |
+| Debian      | 11 (Bullseye)   | 5.10          | ✅        |
+| Debian      | 12 (Bookworm)   | 6.1           | ✅        |
+| Ubuntu      | 10.04 LTS       | 2.6.32        | ✅        |
+| Ubuntu      | 12.04 LTS       | 3.2           | ✅        |
+| Ubuntu      | 14.04 LTS       | 3.13          | ✅        |
+| Ubuntu      | 16.04 LTS       | 4.4           | ✅        |
+| Ubuntu      | 18.04 LTS       | 4.15          | ✅        |
+| Ubuntu      | 20.04 LTS       | 5.4           | ✅        |
+| Ubuntu      | 22.04 LTS       | 5.15          | ✅        |
+| Ubuntu      | 24.04 LTS       | 6.8           | ✅        |
 ---
 
 #### Other Linux Distributions
