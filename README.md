@@ -302,9 +302,10 @@ Support applies regardless of userland profile, USE flags, or package selection,
 #### Amazon Web Services (AWS)
 
 | Platform | Image / Release | Kernel Version | Supported |
-|---------|-----------------|----------------|-----------|
+|---------------|---------------------|----------------|-----------|
 | Amazon Linux | Amazon Linux 1 | 4.14 | ✅ |
-| Amazon Linux | Amazon Linux 2 | 4.14 / 5.10 | ✅ |
+| Amazon Linux | Amazon Linux 2 | 4.14 | ✅ |
+| Amazon Linux | Amazon Linux 2 | 5.10 | ✅ |
 | Amazon Linux | Amazon Linux 2023 | 6.1 | ✅ |
 | AWS | Custom Linux AMIs | ≥ 2.6.32 | ✅ |
 
@@ -313,10 +314,19 @@ Support applies regardless of userland profile, USE flags, or package selection,
 #### DigitalOcean
 
 | Platform | Image Type | Kernel Version | Supported |
-|---------|------------|----------------|-----------|
-| DigitalOcean | Ubuntu images | 3.x–6.x | ✅ |
-| DigitalOcean | Debian images | 3.x–6.x | ✅ |
-| DigitalOcean | Fedora images | 3.x–6.x | ✅ |
+|----------------|-----------------|----------------|-----------|
+| DigitalOcean | Ubuntu images | 3.x | ✅ |
+| DigitalOcean | Ubuntu images | 4.x | ✅ |
+| DigitalOcean | Ubuntu images | 5.x | ✅ |
+| DigitalOcean | Ubuntu images | 6.x | ✅ |
+| DigitalOcean | Debian images | 3.x | ✅ |
+| DigitalOcean | Debian images | 4.x | ✅ |
+| DigitalOcean | Debian images | 5.x | ✅ |
+| DigitalOcean | Debian images | 6.x | ✅ |
+| DigitalOcean | Fedora images | 3.x | ✅ |
+| DigitalOcean | Fedora images | 4.x | ✅ |
+| DigitalOcean | Fedora images | 5.x | ✅ |
+| DigitalOcean | Fedora images | 6.x | ✅ |
 | DigitalOcean | Custom droplets | ≥ 2.6.32 | ✅ |
 
 ---
@@ -324,10 +334,18 @@ Support applies regardless of userland profile, USE flags, or package selection,
 #### Microsoft Azure
 
 | Platform | Image Type | Kernel Version | Supported |
-|---------|------------|----------------|-----------|
-| Azure | Ubuntu marketplace images | 3.x–6.x | ✅ |
-| Azure | RHEL marketplace images | 3.x–5.x | ✅ |
-| Azure | Debian marketplace images | 3.x–6.x | ✅ |
+|----------|--------------------------|----------------|-----------|
+| Azure | Ubuntu marketplace images | 3.x | ✅ |
+| Azure | Ubuntu marketplace images | 4.x | ✅ |
+| Azure | Ubuntu marketplace images | 5.x | ✅ |
+| Azure | Ubuntu marketplace images | 6.x | ✅ |
+| Azure | RHEL marketplace images | 3.x | ✅ |
+| Azure | RHEL marketplace images | 4.x | ✅ |
+| Azure | RHEL marketplace images | 5.x | ✅ |
+| Azure | Debian marketplace images | 3.x | ✅ |
+| Azure | Debian marketplace images | 4.x | ✅ |
+| Azure | Debian marketplace images | 5.x | ✅ |
+| Azure | Debian marketplace images | 6.x | ✅ |
 | Azure | Custom Linux images | ≥ 2.6.32 | ✅ |
 
 
@@ -345,23 +363,43 @@ Support is determined by whether the platform runs a Linux-based OS meeting the 
 
 ### Supported NX-OS Platforms
 
-| NX-OS Release Train | Linux Kernel Basis | Supported Nexus Families | Supported |
-|--------------------|-------------------|--------------------------|-----------|
-| 9.3(x) | Linux 3.10 | Nexus 3000, Nexus 9000 | ✅ |
-| 10.2(x) | Linux 3.10 | Nexus 9000 | ✅ |
-| 10.3(x) | Linux 3.10 | Nexus 9000 | ✅ |
-| 10.4(x) | Linux 3.10 | Nexus 9000 | ✅ |
-| 10.5(x) | Linux 3.10 | Nexus 3500, Nexus 3600, Nexus 9000 | ✅ |
-| 10.6(x) | Linux 3.10 | Nexus 9000 | ✅ |
+| Vendor | Platform | Model | NX-OS Release | Linux Kernel Basis | Supported |
+|--------|---------|---------|---------------|------------------|-----------|
+| Cisco | Nexus | 3000 | 9.3 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 9.3 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 10.2 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 10.3 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 10.4 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 3500 | 10.5 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 3600 | 10.5 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 10.5 | Linux 3.10 | ✅ |
+| Cisco | Nexus | 9000 | 10.6 | Linux 3.10 | ✅ |
 
 ### Not Supported NX-OS Platforms
 
-| NX-OS Release Train | Linux Kernel Basis | Nexus Families | Supported | Reason |
-|--------------------|-------------------|----------------|-----------|--------|
-| 4.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
-| 5.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
-| 6.x | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
-| 7.x (early) | Linux 2.6 | Early Nexus platforms | ❌ | Kernel below minimum |
+| Vendor | Platform | Model / Series | Version / Release | Supported | Reason |
+|--------|---------|----------------|-----------------|-----------|--------|
+| Cisco | NX-OS | Nexus 1000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 1000 | 4.1 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 1000 | 4.2 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 2000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 2000 | 4.1 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 2000 | 4.2 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 3000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 3000 | 5.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 3000 | 6.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 5000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 5000 | 5.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 5000 | 6.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 6000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 6000 | 5.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 6000 | 6.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 7000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 7000 | 5.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 7000 | 6.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 9000 | 4.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 9000 | 5.0 | ❌ | Kernel below minimum |
+| Cisco | NX-OS | Nexus 9000 | 6.0 | ❌ | Kernel below minimum |
 
 ---
 
