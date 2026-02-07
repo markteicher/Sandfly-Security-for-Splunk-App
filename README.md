@@ -249,13 +249,24 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 #### Arch Linux
 
-| Distribution | Release / Snapshot | Typical Kernel Version | Supported |
-|-------------|--------------------|------------------------|-----------|
-| Arch Linux | 2010–2011 snapshots | 2.6.32–2.6.38 | ✅ |
-| Arch Linux | 2012–2014 snapshots | 3.x | ✅ |
-| Arch Linux | 2015–2018 snapshots | 4.x | ✅ |
-| Arch Linux | 2019–2022 snapshots | 5.x | ✅ |
-| Arch Linux | 2023–present snapshots | 6.x | ✅ |
+| Distribution | Release / Snapshot       | Typical Kernel Version | Supported |
+|-------------|-------------------------|----------------------|-----------|
+| Arch Linux  | 2010 snapshot           | 2.6.32               | ✅        |
+| Arch Linux  | 2011 snapshot           | 2.6.38               | ✅        |
+| Arch Linux  | 2012 snapshot           | 3.2                  | ✅        |
+| Arch Linux  | 2013 snapshot           | 3.5                  | ✅        |
+| Arch Linux  | 2014 snapshot           | 3.10                 | ✅        |
+| Arch Linux  | 2015 snapshot           | 4.0                  | ✅        |
+| Arch Linux  | 2016 snapshot           | 4.2                  | ✅        |
+| Arch Linux  | 2017 snapshot           | 4.9                  | ✅        |
+| Arch Linux  | 2018 snapshot           | 4.18                 | ✅        |
+| Arch Linux  | 2019 snapshot           | 5.0                  | ✅        |
+| Arch Linux  | 2020 snapshot           | 5.4                  | ✅        |
+| Arch Linux  | 2021 snapshot           | 5.10                 | ✅        |
+| Arch Linux  | 2022 snapshot           | 5.15                 | ✅        |
+| Arch Linux  | 2023 snapshot           | 6.0                  | ✅        |
+| Arch Linux  | 2024 snapshot           | 6.8                  | ✅        |
+
 
 ---
 
