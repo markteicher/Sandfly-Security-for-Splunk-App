@@ -270,8 +270,26 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 ---
 
+
 #### Gentoo Linux
 
+| Distribution | Profile / Era | Typical Kernel Version | Supported |
+|-------------|-------------------------------|----------------------|-----------|
+| Gentoo | Legacy profiles (2010) | 2.6.32 | ✅ |
+| Gentoo | Legacy profiles (2011) | 2.6.39 | ✅ |
+| Gentoo | Stable profiles (2012) | 3.2 | ✅ |
+| Gentoo | Stable profiles (2013) | 3.5 | ✅ |
+| Gentoo | Stable profiles (2014) | 3.10 | ✅ |
+| Gentoo | Stable profiles (2015) | 3.18 | ✅ |
+| Gentoo | Stable profiles (2016) | 4.0 | ✅ |
+| Gentoo | Stable profiles (2017) | 4.9 | ✅ |
+| Gentoo | Stable profiles (2018) | 4.19 | ✅ |
+| Gentoo | Stable profiles (2019) | 4.20 | ✅ |
+| Gentoo | Stable profiles (2020) | 5.4 | ✅ |
+| Gentoo | Stable profiles (2021) | 5.10 | ✅ |
+| Gentoo | Stable profiles (2022) | 5.15 | ✅ |
+| Gentoo | Current stable/testing (2023) | 6.0 | ✅ |
+| Gentoo | Current stable/testing (2024) | 6.8 | ✅ |
 
 
 Support applies regardless of userland profile, USE flags, or package selection, provided the running kernel meets the minimum requirement and SSH access is available.
