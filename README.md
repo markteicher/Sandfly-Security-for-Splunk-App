@@ -177,8 +177,8 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 ---
 
+## Debian / Ubuntu–based Distributions
 
-#### Debian / Ubuntu–based Distributions
 
 | Distribution | Specific Release | Kernel Version | Supported |
 |-------------|-----------------|---------------|-----------|
@@ -199,14 +199,46 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 | Ubuntu      | 24.04 LTS       | 6.8           | ✅        |
 ---
 
+
 #### Other Linux Distributions
 
-| Distribution | Specific Release / Condition | Kernel Version | Supported |
-|-------------|-----------------------------|---------------|-----------|
-| Fedora | 16+ | ≥ 3.x | ✅ |
-| SUSE Linux Enterprise | 11 SP1+ | ≥ 2.6.32 | ✅ |
-| SUSE Linux Enterprise | 12 | 3.12 | ✅ |
-| SUSE Linux Enterprise | 15 | 4.12+ | ✅ |
+| Distribution             | Specific Release / Condition | Kernel Version | Supported |
+|--------------------------|----------------------------|---------------|-----------|
+| Fedora                   | 16                        | 3.1           | ✅        |
+| Fedora                   | 17                        | 3.3           | ✅        |
+| Fedora                   | 18                        | 3.6           | ✅        |
+| Fedora                   | 19                        | 3.8           | ✅        |
+| Fedora                   | 20                        | 3.10          | ✅        |
+| Fedora                   | 21                        | 3.17          | ✅        |
+| Fedora                   | 22                        | 4.0           | ✅        |
+| Fedora                   | 23                        | 4.2           | ✅        |
+| Fedora                   | 24                        | 4.5           | ✅        |
+| Fedora                   | 25                        | 4.6           | ✅        |
+| Fedora                   | 26                        | 4.10          | ✅        |
+| Fedora                   | 27                        | 4.13          | ✅        |
+| Fedora                   | 28                        | 4.16          | ✅        |
+| Fedora                   | 29                        | 4.18          | ✅        |
+| Fedora                   | 30                        | 5.0           | ✅        |
+| Fedora                   | 31                        | 5.3           | ✅        |
+| Fedora                   | 32                        | 5.6           | ✅        |
+| Fedora                   | 33                        | 5.8           | ✅        |
+| Fedora                   | 34                        | 5.11          | ✅        |
+| Fedora                   | 35                        | 5.14          | ✅        |
+| Fedora                   | 36                        | 5.16          | ✅        |
+| Fedora                   | 37                        | 5.17          | ✅        |
+| Fedora                   | 38                        | 6.0           | ✅        |
+| SUSE Linux Enterprise    | 11 SP1                     | 2.6.32        | ✅        |
+| SUSE Linux Enterprise    | 11 SP2                     | 2.6.33        | ✅        |
+| SUSE Linux Enterprise    | 11 SP3                     | 2.6.34        | ✅        |
+| SUSE Linux Enterprise    | 12                         | 3.12          | ✅        |
+| SUSE Linux Enterprise    | 12 SP1                     | 3.16          | ✅        |
+| SUSE Linux Enterprise    | 12 SP2                     | 4.4           | ✅        |
+| SUSE Linux Enterprise    | 12 SP3                     | 4.12          | ✅        |
+| SUSE Linux Enterprise    | 15                         | 4.12+         | ✅        |
+| SUSE Linux Enterprise    | 15 SP1                     | 5.3           | ✅        |
+| SUSE Linux Enterprise    | 15 SP2                     | 5.4           | ✅        |
+| SUSE Linux Enterprise    | 15 SP3                     | 5.6           | ✅        |
+| SUSE Linux Enterprise    | 15 SP4                     | 5.14          | ✅        |
 
 
 ---
