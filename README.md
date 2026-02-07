@@ -1,3 +1,5 @@
+![Sandfly Security](docs/images/sandfly_logo.jpg)
+
 # Sandfly Security for Splunk App
 
 ## Overview
