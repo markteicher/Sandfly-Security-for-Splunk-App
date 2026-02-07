@@ -313,20 +313,72 @@ Support applies regardless of userland profile, USE flags, or package selection,
 
 #### DigitalOcean
 
+
 | Platform | Image Type | Kernel Version | Supported |
-|----------------|-----------------|----------------|-----------|
-| DigitalOcean | Ubuntu images | 3.x | ✅ |
-| DigitalOcean | Ubuntu images | 4.x | ✅ |
-| DigitalOcean | Ubuntu images | 5.x | ✅ |
-| DigitalOcean | Ubuntu images | 6.x | ✅ |
-| DigitalOcean | Debian images | 3.x | ✅ |
-| DigitalOcean | Debian images | 4.x | ✅ |
-| DigitalOcean | Debian images | 5.x | ✅ |
-| DigitalOcean | Debian images | 6.x | ✅ |
-| DigitalOcean | Fedora images | 3.x | ✅ |
-| DigitalOcean | Fedora images | 4.x | ✅ |
-| DigitalOcean | Fedora images | 5.x | ✅ |
-| DigitalOcean | Fedora images | 6.x | ✅ |
+|-------------|----------------|----------------|-----------|
+| DigitalOcean | Ubuntu images | 3.0 | ✅ |
+| DigitalOcean | Ubuntu images | 3.1 | ✅ |
+| DigitalOcean | Ubuntu images | 3.2 | ✅ |
+| DigitalOcean | Ubuntu images | 3.3 | ✅ |
+| DigitalOcean | Ubuntu images | 3.4 | ✅ |
+| DigitalOcean | Ubuntu images | 3.5 | ✅ |
+| DigitalOcean | Ubuntu images | 3.6 | ✅ |
+| DigitalOcean | Ubuntu images | 3.7 | ✅ |
+| DigitalOcean | Ubuntu images | 3.8 | ✅ |
+| DigitalOcean | Ubuntu images | 3.9 | ✅ |
+| DigitalOcean | Ubuntu images | 4.0 | ✅ |
+| DigitalOcean | Ubuntu images | 4.1 | ✅ |
+| DigitalOcean | Ubuntu images | 4.2 | ✅ |
+| DigitalOcean | Ubuntu images | 4.3 | ✅ |
+| DigitalOcean | Ubuntu images | 4.4 | ✅ |
+| DigitalOcean | Ubuntu images | 5.0 | ✅ |
+| DigitalOcean | Ubuntu images | 5.1 | ✅ |
+| DigitalOcean | Ubuntu images | 5.2 | ✅ |
+| DigitalOcean | Ubuntu images | 5.3 | ✅ |
+| DigitalOcean | Ubuntu images | 5.4 | ✅ |
+| DigitalOcean | Ubuntu images | 6.0 | ✅ |
+| DigitalOcean | Ubuntu images | 6.1 | ✅ |
+| DigitalOcean | Ubuntu images | 6.2 | ✅ |
+| DigitalOcean | Ubuntu images | 6.3 | ✅ |
+| DigitalOcean | Debian images | 3.0 | ✅ |
+| DigitalOcean | Debian images | 3.1 | ✅ |
+| DigitalOcean | Debian images | 3.2 | ✅ |
+| DigitalOcean | Debian images | 3.3 | ✅ |
+| DigitalOcean | Debian images | 3.4 | ✅ |
+| DigitalOcean | Debian images | 3.5 | ✅ |
+| DigitalOcean | Debian images | 3.6 | ✅ |
+| DigitalOcean | Debian images | 3.7 | ✅ |
+| DigitalOcean | Debian images | 3.8 | ✅ |
+| DigitalOcean | Debian images | 3.9 | ✅ |
+| DigitalOcean | Debian images | 4.0 | ✅ |
+| DigitalOcean | Debian images | 4.1 | ✅ |
+| DigitalOcean | Debian images | 4.2 | ✅ |
+| DigitalOcean | Debian images | 4.3 | ✅ |
+| DigitalOcean | Debian images | 4.4 | ✅ |
+| DigitalOcean | Debian images | 5.0 | ✅ |
+| DigitalOcean | Debian images | 5.1 | ✅ |
+| DigitalOcean | Debian images | 5.2 | ✅ |
+| DigitalOcean | Debian images | 5.3 | ✅ |
+| DigitalOcean | Debian images | 5.4 | ✅ |
+| DigitalOcean | Debian images | 6.0 | ✅ |
+| DigitalOcean | Debian images | 6.1 | ✅ |
+| DigitalOcean | Fedora images | 3.0 | ✅ |
+| DigitalOcean | Fedora images | 3.1 | ✅ |
+| DigitalOcean | Fedora images | 3.2 | ✅ |
+| DigitalOcean | Fedora images | 3.3 | ✅ |
+| DigitalOcean | Fedora images | 3.4 | ✅ |
+| DigitalOcean | Fedora images | 4.0 | ✅ |
+| DigitalOcean | Fedora images | 4.1 | ✅ |
+| DigitalOcean | Fedora images | 4.2 | ✅ |
+| DigitalOcean | Fedora images | 4.3 | ✅ |
+| DigitalOcean | Fedora images | 5.0 | ✅ |
+| DigitalOcean | Fedora images | 5.1 | ✅ |
+| DigitalOcean | Fedora images | 5.2 | ✅ |
+| DigitalOcean | Fedora images | 5.3 | ✅ |
+| DigitalOcean | Fedora images | 6.0 | ✅ |
+| DigitalOcean | Fedora images | 6.1 | ✅ |
+| DigitalOcean | Fedora images | 6.2 | ✅ |
+| DigitalOcean | Fedora images | 6.3 | ✅ |
 | DigitalOcean | Custom droplets | ≥ 2.6.32 | ✅ |
 
 ---
