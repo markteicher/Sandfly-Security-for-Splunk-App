@@ -55,7 +55,7 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 
 ---
 
-#### Red Hat–based Distributions
+
 #### Red Hat–based Distributions
 
 | Distribution     | Specific Release | Kernel Version | Supported |
