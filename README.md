@@ -56,7 +56,124 @@ Traditional UNIX operating systems (AIX, Solaris, HP-UX) are **not supported**.
 ---
 
 #### Red Hat–based Distributions
+#### Red Hat–based Distributions
 
+| Distribution     | Specific Release | Kernel Version | Supported |
+|-----------------|-----------------|----------------|-----------|
+| RHEL            | 6.0             | 2.6.32         | ✅        |
+| RHEL            | 6.1             | 2.6.32         | ✅        |
+| RHEL            | 6.2             | 2.6.32         | ✅        |
+| RHEL            | 6.3             | 2.6.32         | ✅        |
+| RHEL            | 6.4             | 2.6.32         | ✅        |
+| RHEL            | 6.5             | 2.6.32         | ✅        |
+| RHEL            | 6.6             | 2.6.32         | ✅        |
+| RHEL            | 6.7             | 2.6.32         | ✅        |
+| RHEL            | 6.8             | 2.6.32         | ✅        |
+| RHEL            | 6.9             | 2.6.32         | ✅        |
+| RHEL            | 6.10            | 2.6.32         | ✅        |
+| RHEL            | 7.0             | 3.10           | ✅        |
+| RHEL            | 7.1             | 3.10           | ✅        |
+| RHEL            | 7.2             | 3.10           | ✅        |
+| RHEL            | 7.3             | 3.10           | ✅        |
+| RHEL            | 7.4             | 3.10           | ✅        |
+| RHEL            | 7.5             | 3.10           | ✅        |
+| RHEL            | 7.6             | 3.10           | ✅        |
+| RHEL            | 7.7             | 3.10           | ✅        |
+| RHEL            | 7.8             | 3.10           | ✅        |
+| RHEL            | 7.9             | 3.10           | ✅        |
+| RHEL            | 8.0             | 4.18           | ✅        |
+| RHEL            | 8.1             | 4.18           | ✅        |
+| RHEL            | 8.2             | 4.18           | ✅        |
+| RHEL            | 8.3             | 4.18           | ✅        |
+| RHEL            | 8.4             | 4.18           | ✅        |
+| RHEL            | 8.5             | 4.18           | ✅        |
+| RHEL            | 8.6             | 4.18           | ✅        |
+| RHEL            | 8.7             | 4.18           | ✅        |
+| RHEL            | 8.8             | 4.18           | ✅        |
+| RHEL            | 8.9             | 4.18           | ✅        |
+| RHEL            | 8.10            | 4.18           | ✅        |
+| RHEL            | 9.0             | 5.14           | ✅        |
+| RHEL            | 9.1             | 5.14           | ✅        |
+| RHEL            | 9.2             | 5.14           | ✅        |
+| RHEL            | 9.3             | 5.14           | ✅        |
+| RHEL            | 9.4             | 5.14           | ✅        |
+| RHEL            | 9.5             | 5.14           | ✅        |
+| RHEL            | 9.6             | 5.14           | ✅        |
+| CentOS          | 6.0             | 2.6.32         | ✅        |
+| CentOS          | 6.1             | 2.6.32         | ✅        |
+| CentOS          | 6.2             | 2.6.32         | ✅        |
+| CentOS          | 6.3             | 2.6.32         | ✅        |
+| CentOS          | 6.4             | 2.6.32         | ✅        |
+| CentOS          | 6.5             | 2.6.32         | ✅        |
+| CentOS          | 6.6             | 2.6.32         | ✅        |
+| CentOS          | 6.7             | 2.6.32         | ✅        |
+| CentOS          | 6.8             | 2.6.32         | ✅        |
+| CentOS          | 6.9             | 2.6.32         | ✅        |
+| CentOS          | 6.10            | 2.6.32         | ✅        |
+| CentOS          | 7.0             | 3.10           | ✅        |
+| CentOS          | 7.1             | 3.10           | ✅        |
+| CentOS          | 7.2             | 3.10           | ✅        |
+| CentOS          | 7.3             | 3.10           | ✅        |
+| CentOS          | 7.4             | 3.10           | ✅        |
+| CentOS          | 7.5             | 3.10           | ✅        |
+| CentOS          | 7.6             | 3.10           | ✅        |
+| CentOS          | 7.7             | 3.10           | ✅        |
+| CentOS          | 7.8             | 3.10           | ✅        |
+| CentOS          | 7.9             | 3.10           | ✅        |
+| CentOS Stream   | 8.0             | 4.18           | ✅        |
+| CentOS Stream   | 8.1             | 4.18           | ✅        |
+| CentOS Stream   | 8.2             | 4.18           | ✅        |
+| CentOS Stream   | 8.3             | 4.18           | ✅        |
+| CentOS Stream   | 8.4             | 4.18           | ✅        |
+| CentOS Stream   | 8.5             | 4.18           | ✅        |
+| CentOS Stream   | 8.6             | 4.18           | ✅        |
+| CentOS Stream   | 8.7             | 4.18           | ✅        |
+| CentOS Stream   | 8.8             | 4.18           | ✅        |
+| CentOS Stream   | 8.9             | 4.18           | ✅        |
+| CentOS Stream   | 8.10            | 4.18           | ✅        |
+| CentOS Stream   | 9.0             | 5.14           | ✅        |
+| CentOS Stream   | 9.1             | 5.14           | ✅        |
+| CentOS Stream   | 9.2             | 5.14           | ✅        |
+| CentOS Stream   | 9.3             | 5.14           | ✅        |
+| CentOS Stream   | 9.4             | 5.14           | ✅        |
+| CentOS Stream   | 9.5             | 5.14           | ✅        |
+| CentOS Stream   | 9.6             | 5.14           | ✅        |
+| AlmaLinux       | 8.0             | 4.18           | ✅        |
+| AlmaLinux       | 8.1             | 4.18           | ✅        |
+| AlmaLinux       | 8.2             | 4.18           | ✅        |
+| AlmaLinux       | 8.3             | 4.18           | ✅        |
+| AlmaLinux       | 8.4             | 4.18           | ✅        |
+| AlmaLinux       | 8.5             | 4.18           | ✅        |
+| AlmaLinux       | 8.6             | 4.18           | ✅        |
+| AlmaLinux       | 8.7             | 4.18           | ✅        |
+| AlmaLinux       | 8.8             | 4.18           | ✅        |
+| AlmaLinux       | 8.9             | 4.18           | ✅        |
+| AlmaLinux       | 8.10            | 4.18           | ✅        |
+| AlmaLinux       | 9.0             | 5.14           | ✅        |
+| AlmaLinux       | 9.1             | 5.14           | ✅        |
+| AlmaLinux       | 9.2             | 5.14           | ✅        |
+| AlmaLinux       | 9.3             | 5.14           | ✅        |
+| AlmaLinux       | 9.4             | 5.14           | ✅        |
+| AlmaLinux       | 9.5             | 5.14           | ✅        |
+| AlmaLinux       | 9.6             | 5.14           | ✅        |
+| Rocky Linux     | 8.0             | 4.18           | ✅        |
+| Rocky Linux     | 8.1             | 4.18           | ✅        |
+| Rocky Linux     | 8.2             | 4.18           | ✅        |
+| Rocky Linux     | 8.3             | 4.18           | ✅        |
+| Rocky Linux     | 8.4             | 4.18           | ✅        |
+| Rocky Linux     | 8.5             | 4.18           | ✅        |
+| Rocky Linux     | 8.6             | 4.18           | ✅        |
+| Rocky Linux     | 8.7             | 4.18           | ✅        |
+| Rocky Linux     | 8.8             | 4.18           | ✅        |
+| Rocky Linux     | 8.9             | 4.18           | ✅        |
+| Rocky Linux     | 8.10            | 4.18           | ✅        |
+| Rocky Linux     | 9.0             | 5.14           | ✅        |
+| Rocky Linux     | 9.1             | 5.14           | ✅        |
+| Rocky Linux     | 9.2             | 5.14           | ✅        |
+| Rocky Linux     | 9.3             | 5.14           | ✅        |
+| Rocky Linux     | 9.4             | 5.14           | ✅        |
+| Rocky Linux     | 9.5             | 5.14           | ✅        |
+| Rocky Linux     | 9.6             | 5.14           | ✅        |
 
 ---
 
