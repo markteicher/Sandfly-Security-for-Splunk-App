@@ -7,29 +7,89 @@
 
 PURPOSE
 
-Provides application metadata, versioning information, and references
-for the Sandfly Security for Splunk App. This view is informational only.
+Displays live Sandfly platform metadata retrieved from the Sandfly API
+(/v4/version). No values are hardcoded.
 
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>About</label>
+  <label>About Sandfly</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: APPLICATION INFORMATION                                  -->
+  <!-- BASE SEARCH: SANDLY VERSION INFO                                -->
+  <!-- =============================================================== -->
+  <search>
+    <query>
+      | inputlookup sandfly_version_lookup
+    </query>
+    <earliest>-5m</earliest>
+    <latest>now</latest>
+  </search>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: PLATFORM INFORMATION                                     -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Application Information</title>
+      <title>Platform Information</title>
+      <table>
+        <search>
+          <query>
+            | inputlookup sandfly_version_lookup
+            | fields version build_date website copyright
+          </query>
+        </search>
+        <option name="count">1</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: CRYPTOGRAPHIC IDENTITY                                   -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Cryptographic Identity</title>
+      <table>
+        <search>
+          <query>
+            | inputlookup sandfly_version_lookup
+            | fields server_public_key node_public_key
+          </query>
+        </search>
+        <option name="count">1</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: APPLICATION METADATA                                     -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>Splunk App Metadata</title>
       <html>
         <![CDATA[
         <table>
-          <tr><td><strong>Application</strong></td><td>Sandfly Security for Splunk App</td></tr>
-          <tr><td><strong>Purpose</strong></td><td>Operational visibility and analysis of Sandfly Security data within Splunk</td></tr>
-          <tr><td><strong>Integration Type</strong></td><td>REST API ingestion</td></tr>
-          <tr><td><strong>Data Format</strong></td><td>JSON</td></tr>
-          <tr><td><strong>Splunk Compatibility</strong></td><td>Splunk Enterprise / Splunk Cloud</td></tr>
+          <tr>
+            <td><strong>Application</strong></td>
+            <td>Sandfly Security for Splunk</td>
+          </tr>
+          <tr>
+            <td><strong>Integration Type</strong></td>
+            <td>REST API (Sandfly v4)</td>
+          </tr>
+          <tr>
+            <td><strong>Data Format</strong></td>
+            <td>JSON</td>
+          </tr>
+          <tr>
+            <td><strong>Splunk Compatibility</strong></td>
+            <td>Splunk Enterprise & Splunk Cloud</td>
+          </tr>
         </table>
         ]]>
       </html>
@@ -37,29 +97,11 @@ for the Sandfly Security for Splunk App. This view is informational only.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: VERSIONING                                               -->
+  <!-- ROW 4: ATTRIBUTION                                              -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Version Information</title>
-      <html>
-        <![CDATA[
-        <table>
-          <tr><td><strong>App Version</strong></td><td>1.0.0</td></tr>
-          <tr><td><strong>Sandfly API Version</strong></td><td>v4</td></tr>
-          <tr><td><strong>Build Type</strong></td><td>Single App (TA + UI)</td></tr>
-        </table>
-        ]]>
-      </html>
-    </panel>
-  </row>
-
-  <!-- =============================================================== -->
-  <!-- ROW 3: ATTRIBUTION                                              -->
-  <!-- =============================================================== -->
-  <row>
-    <panel>
-      <title>Attribution & Licensing</title>
+      <title>Attribution</title>
       <html>
         <![CDATA[
         <p>
@@ -69,17 +111,13 @@ for the Sandfly Security for Splunk App. This view is informational only.
           This Splunk App is an independent integration and is not an official
           Sandfly Security product unless explicitly stated otherwise.
         </p>
-        <p>
-          Use of Sandfly Security is governed by the applicable Sandfly
-          Security license agreement.
-        </p>
         ]]>
       </html>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 4: REFERENCES                                              -->
+  <!-- ROW 5: REFERENCES                                               -->
   <!-- =============================================================== -->
   <row>
     <panel>
@@ -87,21 +125,9 @@ for the Sandfly Security for Splunk App. This view is informational only.
       <html>
         <![CDATA[
         <ul>
-          <li>
-            <a href="https://www.sandflysecurity.com" target="_blank">
-              Sandfly Security Website
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com" target="_blank">
-              Sandfly Security Documentation
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.splunk.com" target="_blank">
-              Splunk Documentation
-            </a>
-          </li>
+          <li><a href="https://www.sandflysecurity.com" target="_blank">Sandfly Security Website</a></li>
+          <li><a href="https://docs.sandflysecurity.com" target="_blank">Sandfly Documentation</a></li>
+          <li><a href="https://docs.splunk.com" target="_blank">Splunk Documentation</a></li>
         </ul>
         ]]>
       </html>
