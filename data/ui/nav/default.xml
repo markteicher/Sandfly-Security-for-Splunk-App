@@ -1,16 +1,11 @@
 <!--
-  -------------------------------------------------------------------------
-  Sandfly Security for Splunk App
-  Navigation Definition (Classic XML)
+=============================================================================
+ Sandfly Security for Splunk App
+ Navigation Definition (Classic XML)
 
-  This navigation mirrors the Sandfly Security UI main menu and operational
-  areas, based on official Sandfly documentation.
-
-  References:
-  - https://docs.sandflysecurity.com/docs/user-interface-overview
-
-  This file defines navigation only.
-  -------------------------------------------------------------------------
+ Mirrors the Sandfly Security UI navigation and operational structure.
+ This file defines navigation only.
+=============================================================================
 -->
 
 <nav search_view="sandfly_overview" color="#2c3e50">
@@ -23,7 +18,9 @@
 
   <!-- Results -->
   <collection label="Results">
-    <view name="sandfly_results"/>
+    <view name="sandfly_results_by_host" label="Results By Host"/>
+    <view name="sandfly_results_by_sandfly" label="Results By Sandfly"/>
+    <view name="sandfly_results_all" label="All Results"/>
   </collection>
 
   <!-- Hosts -->
@@ -39,7 +36,12 @@
 
   <!-- SSH Hunter -->
   <collection label="SSH Hunter">
-    <view name="sandfly_sshhunter"/>
+    <view name="sandfly_ssh_summary" label="SSH Summary"/>
+    <view name="sandfly_security_zones" label="Security Zones"/>
+    <view name="sandfly_key_investigation" label="Key Investigation"/>
+    <view name="sandfly_user_investigation" label="User Investigation"/>
+    <view name="sandfly_host_investigation" label="Host Investigation"/>
+    <view name="sandfly_tag_workbench" label="Tag Workbench"/>
   </collection>
 
   <!-- AI Analysis -->
@@ -49,15 +51,18 @@
 
   <!-- Reports -->
   <collection label="Reports">
-    <view name="sandfly_reports"/>
-    <view name="sandfly_host_snapshot"/>
+    <view name="sandfly_host_snapshot" label="Host Snapshot"/>
+    <view name="sandfly_scan_performance" label="Scan Performance"/>
   </collection>
 
-  <!-- Scanning -->
-  <collection label="Scanning">
-    <view name="sandfly_scans"/>
-    <view name="sandfly_scan_queue"/>
-    <view name="sandfly_scan_errors"/>
+  <!-- Operations -->
+  <collection label="Operations">
+    <view name="sandfly_manual_scan" label="Manual Scan"/>
+    <view name="sandfly_incident_scan" label="Incident Scan"/>
+    <view name="sandfly_task_queue" label="Task Queues"/>
+    <view name="sandfly_scan_errors" label="Scanning Error Log"/>
+    <view name="sandfly_audit_logs" label="Audit Log"/>
+    <view name="sandfly_error_logs" label="Error Log"/>
   </collection>
 
   <!-- Schedules -->
@@ -85,24 +90,17 @@
     <view name="sandfly_sandflies"/>
   </collection>
 
-  <!-- Operations -->
-  <collection label="Operations">
-    <view name="sandfly_task_queue"/>
-    <view name="sandfly_system_health"/>
-  </collection>
-
-  <!-- Logging -->
-  <collection label="Logging">
-    <view name="sandfly_audit_logs"/>
-    <view name="sandfly_error_logs"/>
-  </collection>
-
   <!-- Settings -->
   <collection label="Settings">
-    <view name="sandfly_users"/>
+    <view name="sandfly_settings_summary" label="Settings Summary"/>
+    <view name="sandfly_users" label="Manage Users"/>
+    <view name="sandfly_user_activity_deltas" label="User Activity Deltas"/>
+    <view name="sandfly_user_activity_aging" label="User Activity Aging"/>
+    <view name="sandfly_server_config" label="Server Configuration"/>
+    <view name="sandfly_integrations" label="Integrations and Apps"/>
+    <view name="sandfly_threat_feeds" label="Threat Feeds"/>
     <view name="sandfly_licensing"/>
     <view name="sandfly_subscription"/>
-    <view name="sandfly_server_config"/>
   </collection>
 
   <!-- Help -->
