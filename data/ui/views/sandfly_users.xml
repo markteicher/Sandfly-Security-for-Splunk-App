@@ -39,8 +39,6 @@ All fields displayed are sourced directly from the Sandfly API response.
             | stats dc(username)
           </query>
         </search>
-        <option name="useColors">true</option>
-        <option name="colorMode">block</option>
       </single>
     </panel>
 
@@ -54,8 +52,6 @@ All fields displayed are sourced directly from the Sandfly API response.
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
-        <option name="colorMode">block</option>
       </single>
     </panel>
 
@@ -65,12 +61,10 @@ All fields displayed are sourced directly from the Sandfly API response.
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | search logins_failed_count &gt; 0
+            | search logins_failed_count > 0
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
-        <option name="colorMode">block</option>
       </single>
     </panel>
   </row>
@@ -134,7 +128,7 @@ All fields displayed are sourced directly from the Sandfly API response.
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | search logins_failed_count &gt; 0
+            | search logins_failed_count > 0
             | table
                 username
                 logins_failed_count
