@@ -75,7 +75,12 @@ actionable for operators and administrators.
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
-            | eval misconfigured=if(isnull(email_recipients) OR email_recipients="[]" OR isnull(email_sender) OR isnull(mail_server), 1, 0)
+            | eval misconfigured=if(
+                isnull(email_recipients) OR email_recipients="[]" 
+                OR isnull(email_sender) 
+                OR isnull(mail_server),
+                1, 0
+              )
             | stats sum(misconfigured)
           </query>
         </search>
