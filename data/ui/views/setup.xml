@@ -7,31 +7,32 @@
 
 SETUP WIZARD
 
-This setup wizard configures the Sandfly Security for Splunk App.
+Configures the Sandfly Security for Splunk App.
 
 Authentication and authorization are validated during setup execution.
 The provided account MUST be either:
 - an admin user, OR
 - an API-enabled account with required api_* roles
 
-Setup will fail with a clear error if permissions are insufficient.
+Setup fails with explicit validation errors if requirements are not met.
 
+All HTML is Classic XML–safe and fully CDATA-wrapped.
 =============================================================================
 -->
 
 <form version="1.1" type="wizard">
-  <label>Sandfly Security – Setup</label>
+  <label>🪱 Sandfly Security – Setup</label>
 
   <description>
-    Configure connectivity, storage, logging, and data collection
-    for the Sandfly Security for Splunk App.
+    Configure connectivity, storage, logging, proxy settings, and data
+    collection for the Sandfly Security for Splunk App.
   </description>
 
   <!-- =============================================================== -->
   <!-- STEP 1: SANDFLY SERVER CONNECTION                               -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Sandfly Server Connection</legend>
+    <legend>🔗 Sandfly Server Connection</legend>
 
     <input type="text" token="sandfly_url">
       <label>Sandfly Server URL</label>
@@ -53,12 +54,16 @@ Setup will fail with a clear error if permissions are insufficient.
     <html>
       <![CDATA[
       <p>
-        <strong>Required permissions:</strong><br/>
-        The account must be an <b>admin</b> user or an API-enabled account
-        with the required <code>api_*</code> roles.
+        <strong>Required permissions:</strong>
       </p>
+      <ul>
+        <li>Admin user <b>OR</b></li>
+        <li>API-enabled account with required <code>api_*</code> roles</li>
+      </ul>
       <p>
-        Setup will fail if the account does not meet these requirements.
+        Authentication, role validation, and API reachability are verified
+        during setup. Setup will fail with a clear error if permissions
+        are insufficient.
       </p>
       ]]>
     </html>
@@ -68,13 +73,17 @@ Setup will fail with a clear error if permissions are insufficient.
   <!-- STEP 2: SPLUNK INDEX CONFIGURATION                               -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Splunk Index</legend>
+    <legend>📦 Splunk Index</legend>
 
     <input type="text" token="target_index">
       <label>Target Index</label>
       <help>
-        The index will be created during setup if it does not already exist.
+        The index will be created automatically if it does not exist.
       </help>
+      <validation>
+        <regex>^[a-zA-Z0-9_\-]+$</regex>
+        <message>Index name may contain letters, numbers, underscores, or hyphens only.</message>
+      </validation>
     </input>
   </fieldset>
 
@@ -82,7 +91,7 @@ Setup will fail with a clear error if permissions are insufficient.
   <!-- STEP 3: OPERATIONAL LOGGING                                     -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Operational Logging</legend>
+    <legend>📜 Operational Logging</legend>
 
     <input type="dropdown" token="enable_logging">
       <label>Enable Operational Logging</label>
@@ -92,10 +101,13 @@ Setup will fail with a clear error if permissions are insufficient.
     </input>
 
     <html>
+      <![CDATA[
       <p>
-        When enabled, the app writes operational messages to Splunk
-        internal logs for troubleshooting and monitoring.
+        When enabled, the app logs informational, warning, and error messages
+        to Splunk internal logs using supported log levels
+        (<code>INFO</code>, <code>WARN</code>, <code>ERROR</code>, <code>DEBUG</code>).
       </p>
+      ]]>
     </html>
   </fieldset>
 
@@ -103,7 +115,7 @@ Setup will fail with a clear error if permissions are insufficient.
   <!-- STEP 4: PROXY CONFIGURATION                                     -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Proxy Configuration (Optional)</legend>
+    <legend>🌐 Proxy Configuration (Optional)</legend>
 
     <input type="dropdown" token="proxy_mode">
       <label>Proxy Mode</label>
@@ -115,6 +127,7 @@ Setup will fail with a clear error if permissions are insufficient.
 
     <input type="text" token="proxy_url" depends="$proxy_mode!=none$">
       <label>Proxy URL</label>
+      <help>Example: http://proxy.example.com:8080</help>
     </input>
 
     <input type="text" token="proxy_username" depends="$proxy_mode=proxy_auth$">
@@ -124,13 +137,22 @@ Setup will fail with a clear error if permissions are insufficient.
     <input type="password" token="proxy_password" depends="$proxy_mode=proxy_auth$">
       <label>Proxy Password</label>
     </input>
+
+    <html>
+      <![CDATA[
+      <p>
+        Proxy connectivity is validated during setup. If a proxy is configured,
+        the Sandfly API login and version checks are performed through the proxy.
+      </p>
+      ]]>
+    </html>
   </fieldset>
 
   <!-- =============================================================== -->
   <!-- STEP 5: DATA COLLECTION SELECTION                               -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Data Collection</legend>
+    <legend>📊 Data Collection</legend>
 
     <input type="checkbox" token="collectors">
       <label>Select Data to Collect</label>
@@ -172,20 +194,24 @@ Setup will fail with a clear error if permissions are insufficient.
   <!-- STEP 6: COMPLETE SETUP                                          -->
   <!-- =============================================================== -->
   <fieldset>
-    <legend>Complete Setup</legend>
+    <legend>✅ Complete Setup</legend>
 
     <html>
+      <![CDATA[
       <p>
         Click <b>Finish</b> to authenticate, validate permissions,
-        create required resources, and begin data collection.
+        test proxy connectivity (if configured), create required resources,
+        and finalize setup.
       </p>
       <p>
-        Setup completes only on success. Errors are returned if validation fails.
+        Setup completes only on success. All validation failures return
+        explicit error messages.
       </p>
+      ]]>
     </html>
   </fieldset>
 
   <submit>
-    <label>Finish Setup</label>
+    <label>🚀 Finish Setup</label>
   </submit>
 </form>
