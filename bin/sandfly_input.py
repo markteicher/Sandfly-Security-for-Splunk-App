@@ -7,18 +7,16 @@
 #
 # Purpose:
 # - Authenticate to Sandfly API
-# - Validate credentials, roles, and permissions
-# - Enforce security and operational correctness
+# - Validate credentials and role permissions
+# - Enforce operational correctness
 #
 # Design principles:
 # - Read-only API usage
 # - Explicit failure phases
-# - Human-readable error messages
-# - Splunk-supported logging levels only
+# - Clear, user-facing errors
+# - Splunk-supported logging levels ONLY
 # =============================================================================
 
-import json
-import os
 import sys
 import time
 from typing import Any, Dict, Optional
@@ -30,22 +28,15 @@ from urllib3.util.retry import Retry
 import splunklib.modularinput as smi
 
 
-# -----------------------------------------------------------------------------#
-# Constants
-# -----------------------------------------------------------------------------#
 REQUIRED_ROLES = {"admin", "api_result_read", "api_scan"}
 DEFAULT_TIMEOUT = 60
 
 
 # -----------------------------------------------------------------------------#
-# Utility
+# Logging helper
 # -----------------------------------------------------------------------------#
-def ts() -> str:
-    return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-
-
 def log(log_fn, level, msg):
-    log_fn(level, f"[{ts()}] {msg}")
+    log_fn(level, msg)
 
 
 # -----------------------------------------------------------------------------#
@@ -115,14 +106,14 @@ class SandflyAPI:
                 timeout=self.timeout,
             )
         except Exception as e:
-            raise RuntimeError(f"[CRIT] Unable to connect to Sandfly server: {e}")
+            raise RuntimeError(f"Unable to connect to Sandfly server: {e}")
 
         if resp.status_code == 401:
-            raise RuntimeError("[ERR] Authentication failed: invalid username or password")
+            raise RuntimeError("Authentication failed: invalid username or password")
 
         if resp.status_code != 200:
             raise RuntimeError(
-                f"[ERR] Authentication failed: HTTP {resp.status_code} - {resp.text}"
+                f"Authentication failed (HTTP {resp.status_code}): {resp.text}"
             )
 
         data = resp.json()
@@ -132,7 +123,7 @@ class SandflyAPI:
         self.token_expiry = time.time() + 300
 
         if not self.access_token or not self.refresh_token:
-            raise RuntimeError("[CRIT] Authentication response missing tokens")
+            raise RuntimeError("Authentication response missing access or refresh token")
 
         self._validate_roles(data)
 
@@ -144,22 +135,22 @@ class SandflyAPI:
     def _validate_roles(self, auth_response: Dict[str, Any]):
         user = auth_response.get("user")
         if not user:
-            raise RuntimeError("[CRIT] Authentication succeeded but user object missing")
+            raise RuntimeError("Authentication response missing user details")
 
         roles = set(user.get("roles", []))
         if not roles:
-            raise RuntimeError("[ERR] User has no roles assigned")
+            raise RuntimeError("User account has no roles assigned")
 
         if not roles.intersection(REQUIRED_ROLES):
             raise RuntimeError(
-                "[ERR] Insufficient permissions: account must have at least one of "
-                f"{', '.join(REQUIRED_ROLES)}"
+                "Insufficient permissions: account must have at least ONE of "
+                + ", ".join(sorted(REQUIRED_ROLES))
             )
 
         log(
             self.log_fn,
             smi.LogLevel.INFO,
-            f"Validated user roles: {', '.join(sorted(roles))}",
+            f"Validated roles: {', '.join(sorted(roles))}",
         )
 
     # -------------------------------------------------------------------------#
@@ -184,7 +175,7 @@ class SandflyAPI:
         )
 
         if resp.status_code != 200:
-            raise RuntimeError("[ERR] Token refresh failed")
+            raise RuntimeError("Token refresh failed")
 
         data = resp.json()
         self.access_token = data.get("access_token")
@@ -204,7 +195,7 @@ class SandflyAPI:
 
         if resp.status_code != 200:
             raise RuntimeError(
-                f"[ERR] API GET failed ({path}): HTTP {resp.status_code}"
+                f"API GET failed ({path}): HTTP {resp.status_code}"
             )
 
         return resp.json()
@@ -235,24 +226,20 @@ class SandflyInput(smi.Script):
     def validate_input(self, definition):
         p = definition.parameters
 
-        try:
-            api = SandflyAPI(
-                base_url=p["sandfly_url"],
-                username=p["username"],
-                password=p["password"],
-                log_fn=lambda *_: None,
-                verify_ssl=p.get("verify_ssl", True),
-                timeout=int(p.get("timeout") or DEFAULT_TIMEOUT),
-                proxy_url=p.get("proxy_url"),
-                proxy_user=p.get("proxy_user"),
-                proxy_pass=p.get("proxy_pass"),
-            )
+        api = SandflyAPI(
+            base_url=p["sandfly_url"],
+            username=p["username"],
+            password=p["password"],
+            log_fn=lambda *_: None,
+            verify_ssl=p.get("verify_ssl", True),
+            timeout=int(p.get("timeout") or DEFAULT_TIMEOUT),
+            proxy_url=p.get("proxy_url"),
+            proxy_user=p.get("proxy_user"),
+            proxy_pass=p.get("proxy_pass"),
+        )
 
-            # Explicit permission verification
-            api.get("/version")
-
-        except Exception as e:
-            raise RuntimeError(str(e))
+        # Explicit API reachability check
+        api.get("/v4/version")
 
     # -------------------------------------------------------------------------#
     # Runtime
@@ -263,7 +250,7 @@ class SandflyInput(smi.Script):
         for stanza, cfg in inputs.inputs.items():
             params = cfg["params"]
 
-            api = SandflyAPI(
+            SandflyAPI(
                 base_url=params["sandfly_url"],
                 username=params["username"],
                 password=params["password"],
@@ -275,10 +262,9 @@ class SandflyInput(smi.Script):
                 proxy_pass=params.get("proxy_pass"),
             )
 
-            # No collectors assumed here — collectors handled elsewhere
-            log(ew.log, smi.LogLevel.INFO, "Sandfly input initialized successfully")
+            log(ew.log, smi.LogLevel.INFO, f"Input stanza '{stanza}' initialized")
 
-        log(ew.log, smi.LogLevel.INFO, "Sandfly input completed")
+        log(ew.log, smi.LogLevel.INFO, "Sandfly input completed successfully")
 
 
 if __name__ == "__main__":
