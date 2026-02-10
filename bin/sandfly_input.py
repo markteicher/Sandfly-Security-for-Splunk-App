@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# =============================================================================
 # File: bin/sandfly_input.py
-# -------------------------------------------------------------------------
-# Sandfly Security for Splunk App – Modular Input
+# Sandfly Security for Splunk App
 #
-# Authentication:
-#   POST /v4/auth/login
+# Purpose:
+# - Authenticate to Sandfly API
+# - Validate credentials, roles, and permissions
+# - Enforce security and operational correctness
 #
-# Role enforcement:
-#   Requires one of:
-#     - admin
-#     - api_result_read
-#     - api_scan
-# -------------------------------------------------------------------------
+# Design principles:
+# - Read-only API usage
+# - Explicit failure phases
+# - Human-readable error messages
+# - Splunk-supported logging levels only
+# =============================================================================
 
 import json
 import os
@@ -28,36 +30,36 @@ from urllib3.util.retry import Retry
 import splunklib.modularinput as smi
 
 
-def load_checkpoint(path: str) -> Dict[str, Any]:
-    if not os.path.exists(path):
-        return {}
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            return json.load(fh)
-    except Exception:
-        return {}
+# -----------------------------------------------------------------------------#
+# Constants
+# -----------------------------------------------------------------------------#
+REQUIRED_ROLES = {"admin", "api_result_read", "api_scan"}
+DEFAULT_TIMEOUT = 60
 
 
-def save_checkpoint(path: str, data: Dict[str, Any]) -> None:
-    tmp = f"{path}.tmp"
-    with open(tmp, "w", encoding="utf-8") as fh:
-        json.dump(data, fh)
-    os.replace(tmp, path)
+# -----------------------------------------------------------------------------#
+# Utility
+# -----------------------------------------------------------------------------#
+def ts() -> str:
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 
 
-def to_json(obj: Any) -> str:
-    return json.dumps(obj, ensure_ascii=False, default=str)
+def log(log_fn, level, msg):
+    log_fn(level, f"[{ts()}] {msg}")
 
 
+# -----------------------------------------------------------------------------#
+# Sandfly API Client
+# -----------------------------------------------------------------------------#
 class SandflyAPI:
     def __init__(
         self,
         base_url: str,
         username: str,
         password: str,
-        log,
+        log_fn,
         verify_ssl: bool = True,
-        timeout: int = 60,
+        timeout: int = DEFAULT_TIMEOUT,
         proxy_url: Optional[str] = None,
         proxy_user: Optional[str] = None,
         proxy_pass: Optional[str] = None,
@@ -66,12 +68,11 @@ class SandflyAPI:
         self.username = username
         self.password = password
         self.timeout = timeout
-        self.log = log
+        self.log_fn = log_fn
 
         self.access_token = None
         self.refresh_token = None
         self.token_expiry = 0
-        self.roles = []
 
         self.session = requests.Session()
         self.session.verify = verify_ssl
@@ -88,90 +89,130 @@ class SandflyAPI:
         if proxy_url:
             proxy = proxy_url
             if proxy_user and proxy_pass:
-                proxy = proxy_url.replace(
-                    "://", f"://{proxy_user}:{proxy_pass}@", 1
-                )
+                proxy = proxy_url.replace("://", f"://{proxy_user}:{proxy_pass}@", 1)
             self.session.proxies = {"http": proxy, "https": proxy}
 
-        self.login()
-        self.validate_roles()
+        self.authenticate()
 
-    def login(self) -> None:
-        self.log(smi.LogLevel.INFO, "Authenticating to Sandfly API")
+    # -------------------------------------------------------------------------#
+    # Authentication
+    # -------------------------------------------------------------------------#
+    def authenticate(self):
+        log(self.log_fn, smi.LogLevel.INFO, "Authenticating to Sandfly API")
 
         url = f"{self.base_url}/v4/auth/login"
-        resp = self.session.post(
-            url,
-            json={
-                "username": self.username,
-                "password": self.password,
-                "full_details": True,
-            },
-            headers={"content-type": "application/json"},
-            timeout=self.timeout,
-        )
-        resp.raise_for_status()
+        payload = {
+            "username": self.username,
+            "password": self.password,
+            "full_details": True,
+        }
+
+        try:
+            resp = self.session.post(
+                url,
+                json=payload,
+                headers={"Content-Type": "application/json"},
+                timeout=self.timeout,
+            )
+        except Exception as e:
+            raise RuntimeError(f"[CRIT] Unable to connect to Sandfly server: {e}")
+
+        if resp.status_code == 401:
+            raise RuntimeError("[ERR] Authentication failed: invalid username or password")
+
+        if resp.status_code != 200:
+            raise RuntimeError(
+                f"[ERR] Authentication failed: HTTP {resp.status_code} - {resp.text}"
+            )
 
         data = resp.json()
 
-        self.access_token = data["access_token"]
-        self.refresh_token = data["refresh_token"]
+        self.access_token = data.get("access_token")
+        self.refresh_token = data.get("refresh_token")
         self.token_expiry = time.time() + 300
 
-        user = data.get("user", {})
-        self.roles = user.get("roles", [])
+        if not self.access_token or not self.refresh_token:
+            raise RuntimeError("[CRIT] Authentication response missing tokens")
 
-    def validate_roles(self) -> None:
-        required = {"admin", "api_result_read", "api_scan"}
-        actual = set(self.roles or [])
+        self._validate_roles(data)
 
-        if not actual.intersection(required):
+        log(self.log_fn, smi.LogLevel.INFO, "Authentication and role validation successful")
+
+    # -------------------------------------------------------------------------#
+    # Role validation
+    # -------------------------------------------------------------------------#
+    def _validate_roles(self, auth_response: Dict[str, Any]):
+        user = auth_response.get("user")
+        if not user:
+            raise RuntimeError("[CRIT] Authentication succeeded but user object missing")
+
+        roles = set(user.get("roles", []))
+        if not roles:
+            raise RuntimeError("[ERR] User has no roles assigned")
+
+        if not roles.intersection(REQUIRED_ROLES):
             raise RuntimeError(
-                "Sandfly authentication succeeded, but the account lacks required API permissions.\n\n"
-                "Required role(s): admin OR api_result_read OR api_scan\n"
-                f"Account roles detected: {sorted(actual)}\n\n"
-                "Assign one of the required roles in Sandfly and re-run setup."
+                "[ERR] Insufficient permissions: account must have at least one of "
+                f"{', '.join(REQUIRED_ROLES)}"
             )
 
-    def refresh(self) -> None:
-        self.log(smi.LogLevel.INFO, "Refreshing Sandfly API token")
+        log(
+            self.log_fn,
+            smi.LogLevel.INFO,
+            f"Validated user roles: {', '.join(sorted(roles))}",
+        )
+
+    # -------------------------------------------------------------------------#
+    # Headers
+    # -------------------------------------------------------------------------#
+    def headers(self) -> Dict[str, str]:
+        if time.time() >= self.token_expiry:
+            self.refresh()
+        return {"Authorization": f"Bearer {self.access_token}"}
+
+    # -------------------------------------------------------------------------#
+    # Token refresh
+    # -------------------------------------------------------------------------#
+    def refresh(self):
+        log(self.log_fn, smi.LogLevel.INFO, "Refreshing Sandfly API token")
+
         url = f"{self.base_url}/v4/auth/refresh"
         resp = self.session.post(
             url,
             headers={"Authorization": f"Bearer {self.refresh_token}"},
             timeout=self.timeout,
         )
-        resp.raise_for_status()
+
+        if resp.status_code != 200:
+            raise RuntimeError("[ERR] Token refresh failed")
+
         data = resp.json()
-        self.access_token = data["access_token"]
-        self.refresh_token = data["refresh_token"]
+        self.access_token = data.get("access_token")
+        self.refresh_token = data.get("refresh_token")
         self.token_expiry = time.time() + 300
 
-    def headers(self) -> Dict[str, str]:
-        if time.time() >= self.token_expiry:
-            self.refresh()
-        return {"Authorization": f"Bearer {self.access_token}"}
-
-    def get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    # -------------------------------------------------------------------------#
+    # GET wrapper
+    # -------------------------------------------------------------------------#
+    def get(self, path: str) -> Dict[str, Any]:
         url = f"{self.base_url}{path}"
-        resp = self.session.get(
-            url,
-            headers=self.headers(),
-            params=params or {},
-            timeout=self.timeout,
-        )
+        resp = self.session.get(url, headers=self.headers(), timeout=self.timeout)
+
         if resp.status_code == 401:
             self.refresh()
-            resp = self.session.get(
-                url,
-                headers=self.headers(),
-                params=params or {},
-                timeout=self.timeout,
+            resp = self.session.get(url, headers=self.headers(), timeout=self.timeout)
+
+        if resp.status_code != 200:
+            raise RuntimeError(
+                f"[ERR] API GET failed ({path}): HTTP {resp.status_code}"
             )
-        resp.raise_for_status()
+
         return resp.json()
 
 
+# -----------------------------------------------------------------------------#
+# Splunk Modular Input
+# -----------------------------------------------------------------------------#
 class SandflyInput(smi.Script):
     def get_scheme(self):
         scheme = smi.Scheme("Sandfly Security Input")
@@ -187,3 +228,58 @@ class SandflyInput(smi.Script):
         scheme.add_argument(smi.Argument("proxy_pass", "Proxy Password", smi.Argument.data_type_string, False, encrypted=True))
 
         return scheme
+
+    # -------------------------------------------------------------------------#
+    # Setup-time validation
+    # -------------------------------------------------------------------------#
+    def validate_input(self, definition):
+        p = definition.parameters
+
+        try:
+            api = SandflyAPI(
+                base_url=p["sandfly_url"],
+                username=p["username"],
+                password=p["password"],
+                log_fn=lambda *_: None,
+                verify_ssl=p.get("verify_ssl", True),
+                timeout=int(p.get("timeout") or DEFAULT_TIMEOUT),
+                proxy_url=p.get("proxy_url"),
+                proxy_user=p.get("proxy_user"),
+                proxy_pass=p.get("proxy_pass"),
+            )
+
+            # Explicit permission verification
+            api.get("/version")
+
+        except Exception as e:
+            raise RuntimeError(str(e))
+
+    # -------------------------------------------------------------------------#
+    # Runtime
+    # -------------------------------------------------------------------------#
+    def stream_events(self, inputs, ew):
+        log(ew.log, smi.LogLevel.INFO, "Sandfly input started")
+
+        for stanza, cfg in inputs.inputs.items():
+            params = cfg["params"]
+
+            api = SandflyAPI(
+                base_url=params["sandfly_url"],
+                username=params["username"],
+                password=params["password"],
+                log_fn=ew.log,
+                verify_ssl=params.get("verify_ssl", True),
+                timeout=int(params.get("timeout") or DEFAULT_TIMEOUT),
+                proxy_url=params.get("proxy_url"),
+                proxy_user=params.get("proxy_user"),
+                proxy_pass=params.get("proxy_pass"),
+            )
+
+            # No collectors assumed here — collectors handled elsewhere
+            log(ew.log, smi.LogLevel.INFO, "Sandfly input initialized successfully")
+
+        log(ew.log, smi.LogLevel.INFO, "Sandfly input completed")
+
+
+if __name__ == "__main__":
+    sys.exit(SandflyInput().run(sys.argv))
