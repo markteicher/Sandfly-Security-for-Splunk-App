@@ -1,47 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# =============================================================================
 # File: bin/sandfly_setup_handler.py
-# -------------------------------------------------------------------------
-# Implementation notes
+# Sandfly Security for Splunk App
 #
-# - Sandfly token authentication:
-#     POST /v4/auth/login
+# Purpose:
+# - Validate Sandfly connectivity during app setup
+# - Authenticate and verify role permissions
+# - Verify API reachability
+# - Store configuration only (no ingestion)
 #
-# - Token refresh handling:
-#     POST /v4/auth/refresh
-#     * proactive refresh based on expiry
-#     * reactive refresh on HTTP 401 retry
-#
-# - Proxy support:
-#     * no proxy
-#     * proxy without authentication
-#     * proxy with username/password authentication
-#
-# - Logging:
-#     * Unix-style informational logging via Splunk setup handler
-#     * no stdout printing
-#
-# - Purpose:
-#     * Validate Sandfly connectivity during app setup
-#     * Store configuration only (no data ingestion)
-#
-# - API usage:
-#     * read-only validation calls (GET /version)
-#
-# - Splunk AppInspect compliance:
-#     * no file-based logging
-#     * no persistent state outside Splunk storage
-# -------------------------------------------------------------------------
+# Design constraints:
+# - Setup-time validation only
+# - Read-only API calls
+# - No stdout printing
+# - Explicit error reporting
+# - Splunk AppInspect compliant
+# =============================================================================
 
-import json
 import requests
-
-from splunklib.client import Service
 from splunklib.binding import HTTPError
-from splunklib.searchcommands import dispatch
-
 from splunklib.modularinput import LogLevel
+
+
+REQUIRED_ROLES = {"admin", "api_result_read", "api_scan"}
 
 
 def validate_sandfly_connection(
@@ -54,6 +37,12 @@ def validate_sandfly_connection(
     proxy_user=None,
     proxy_pass=None,
 ):
+    if not sandfly_url:
+        raise ValueError("Sandfly URL is required")
+
+    if not username or not password:
+        raise ValueError("Username and password are required")
+
     session = requests.Session()
     session.verify = verify_ssl
     session.headers.update({"Accept": "application/json"})
@@ -66,26 +55,71 @@ def validate_sandfly_connection(
             )
         session.proxies = {"http": proxy, "https": proxy}
 
+    # -------------------------------------------------------------------------
+    # Authenticate
+    # -------------------------------------------------------------------------
     login_url = f"{sandfly_url.rstrip('/')}/v4/auth/login"
-    resp = session.post(
-        login_url,
-        auth=(username, password),
-        headers={"content-type": "application/json"},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
+    payload = {
+        "username": username,
+        "password": password,
+        "full_details": True,
+    }
 
-    token = resp.json().get("access_token")
-    if not token:
-        raise RuntimeError("Authentication succeeded but no access token returned")
+    try:
+        resp = session.post(
+            login_url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=timeout,
+        )
+    except Exception as e:
+        raise ValueError(f"Unable to connect to Sandfly server: {e}")
 
-    version_url = f"{sandfly_url.rstrip('/')}/version"
+    if resp.status_code == 401:
+        raise ValueError("Authentication failed: invalid username or password")
+
+    if resp.status_code != 200:
+        raise ValueError(
+            f"Authentication failed: HTTP {resp.status_code} - {resp.text}"
+        )
+
+    data = resp.json()
+
+    access_token = data.get("access_token")
+    if not access_token:
+        raise ValueError("Authentication succeeded but no access token was returned")
+
+    # -------------------------------------------------------------------------
+    # Role validation
+    # -------------------------------------------------------------------------
+    user = data.get("user")
+    if not user:
+        raise ValueError("Authentication response missing user details")
+
+    roles = set(user.get("roles", []))
+    if not roles:
+        raise ValueError("User has no roles assigned")
+
+    if not roles.intersection(REQUIRED_ROLES):
+        raise ValueError(
+            "Insufficient permissions: account must have at least one of "
+            + ", ".join(sorted(REQUIRED_ROLES))
+        )
+
+    # -------------------------------------------------------------------------
+    # API reachability check
+    # -------------------------------------------------------------------------
+    version_url = f"{sandfly_url.rstrip('/')}/v4/version"
     resp = session.get(
         version_url,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {access_token}"},
         timeout=timeout,
     )
-    resp.raise_for_status()
+
+    if resp.status_code != 200:
+        raise ValueError(
+            f"Sandfly API validation failed (/v4/version): HTTP {resp.status_code}"
+        )
 
     return resp.json()
 
@@ -97,8 +131,10 @@ def setup_handler(request):
         sandfly_url = config.get("sandfly_url")
         username = config.get("username")
         password = config.get("password")
+
         verify_ssl = config.get("verify_ssl", "true").lower() == "true"
-        timeout = int(config.get("timeout", 60))
+        timeout = int(config.get("timeout") or 60)
+
         proxy_url = config.get("proxy_url")
         proxy_user = config.get("proxy_user")
         proxy_pass = config.get("proxy_pass")
@@ -116,7 +152,7 @@ def setup_handler(request):
 
         return {
             "status": "success",
-            "message": "Successfully connected to Sandfly Security API",
+            "message": "Successfully validated Sandfly API connectivity and permissions",
         }
 
     except HTTPError as e:
