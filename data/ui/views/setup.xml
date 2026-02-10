@@ -43,11 +43,13 @@ All HTML is Classic XML–safe and fully CDATA-wrapped.
       </validation>
     </input>
 
-    <input type="text" token="sandfly_username">
+    <!-- FIXED TOKEN -->
+    <input type="text" token="username">
       <label>Username</label>
     </input>
 
-    <input type="password" token="sandfly_password">
+    <!-- FIXED TOKEN -->
+    <input type="password" token="password">
       <label>Password</label>
     </input>
 
@@ -82,7 +84,9 @@ All HTML is Classic XML–safe and fully CDATA-wrapped.
       </help>
       <validation>
         <regex>^[a-zA-Z0-9_\-]+$</regex>
-        <message>Index name may contain letters, numbers, underscores, or hyphens only.</message>
+        <message>
+          Index name may contain letters, numbers, underscores, or hyphens only.
+        </message>
       </validation>
     </input>
   </fieldset>
@@ -103,9 +107,9 @@ All HTML is Classic XML–safe and fully CDATA-wrapped.
     <html>
       <![CDATA[
       <p>
-        When enabled, the app logs informational, warning, and error messages
-        to Splunk internal logs using supported log levels
-        (<code>INFO</code>, <code>WARN</code>, <code>ERROR</code>, <code>DEBUG</code>).
+        When enabled, the app logs operational messages to Splunk internal logs
+        using supported log levels (<code>INFO</code>, <code>WARN</code>,
+        <code>ERROR</code>, <code>DEBUG</code>).
       </p>
       ]]>
     </html>
@@ -130,11 +134,11 @@ All HTML is Classic XML–safe and fully CDATA-wrapped.
       <help>Example: http://proxy.example.com:8080</help>
     </input>
 
-    <input type="text" token="proxy_username" depends="$proxy_mode=proxy_auth$">
+    <input type="text" token="proxy_user" depends="$proxy_mode=proxy_auth$">
       <label>Proxy Username</label>
     </input>
 
-    <input type="password" token="proxy_password" depends="$proxy_mode=proxy_auth$">
+    <input type="password" token="proxy_pass" depends="$proxy_mode=proxy_auth$">
       <label>Proxy Password</label>
     </input>
 
