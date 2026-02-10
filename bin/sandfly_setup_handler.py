@@ -21,7 +21,6 @@
 
 import requests
 from splunklib.binding import HTTPError
-from splunklib.modularinput import LogLevel
 
 
 REQUIRED_ROLES = {"admin", "api_result_read", "api_scan"}
@@ -47,13 +46,20 @@ def validate_sandfly_connection(
     session.verify = verify_ssl
     session.headers.update({"Accept": "application/json"})
 
+    # -------------------------------------------------------------------------
+    # Proxy configuration + validation
+    # -------------------------------------------------------------------------
     if proxy_url:
         proxy = proxy_url
         if proxy_user and proxy_pass:
-            proxy = proxy_url.replace(
-                "://", f"://{proxy_user}:{proxy_pass}@", 1
-            )
+            proxy = proxy_url.replace("://", f"://{proxy_user}:{proxy_pass}@", 1)
         session.proxies = {"http": proxy, "https": proxy}
+
+        try:
+            # Lightweight connectivity test via HEAD
+            session.head(sandfly_url, timeout=timeout)
+        except Exception as e:
+            raise ValueError(f"Proxy connection failed: {e}")
 
     # -------------------------------------------------------------------------
     # Authenticate
@@ -80,7 +86,7 @@ def validate_sandfly_connection(
 
     if resp.status_code != 200:
         raise ValueError(
-            f"Authentication failed: HTTP {resp.status_code} - {resp.text}"
+            f"Authentication failed (HTTP {resp.status_code}): {resp.text}"
         )
 
     data = resp.json()
@@ -98,7 +104,7 @@ def validate_sandfly_connection(
 
     roles = set(user.get("roles", []))
     if not roles:
-        raise ValueError("User has no roles assigned")
+        raise ValueError("User account has no roles assigned")
 
     if not roles.intersection(REQUIRED_ROLES):
         raise ValueError(
@@ -110,11 +116,14 @@ def validate_sandfly_connection(
     # API reachability check
     # -------------------------------------------------------------------------
     version_url = f"{sandfly_url.rstrip('/')}/v4/version"
-    resp = session.get(
-        version_url,
-        headers={"Authorization": f"Bearer {access_token}"},
-        timeout=timeout,
-    )
+    try:
+        resp = session.get(
+            version_url,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=timeout,
+        )
+    except Exception as e:
+        raise ValueError(f"Failed to reach Sandfly API (/v4/version): {e}")
 
     if resp.status_code != 200:
         raise ValueError(
