@@ -4,35 +4,26 @@
  Sandfly Security for Splunk App
  About
 =============================================================================
-
-PURPOSE
-
-Displays live Sandfly platform metadata retrieved from the Sandfly API
-(/v4/version). No values are hardcoded.
-
-=============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>About Sandfly</label>
+  <label>ℹ️ About Sandfly</label>
 
   <!-- =============================================================== -->
-  <!-- BASE SEARCH: SANDLY VERSION INFO                                -->
+  <!-- BASE SEARCH                                                     -->
   <!-- =============================================================== -->
   <search>
     <query>
       | inputlookup sandfly_version_lookup
     </query>
-    <earliest>-5m</earliest>
-    <latest>now</latest>
   </search>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: PLATFORM INFORMATION                                     -->
+  <!-- PLATFORM INFORMATION                                            -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Platform Information</title>
+      <title>🖥️ Platform Information</title>
       <table>
         <search>
           <query>
@@ -47,11 +38,11 @@ Displays live Sandfly platform metadata retrieved from the Sandfly API
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: CRYPTOGRAPHIC IDENTITY                                   -->
+  <!-- CRYPTOGRAPHIC IDENTITY                                          -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Cryptographic Identity</title>
+      <title>🔐 Cryptographic Identity</title>
       <table>
         <search>
           <query>
@@ -66,71 +57,85 @@ Displays live Sandfly platform metadata retrieved from the Sandfly API
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: APPLICATION METADATA                                     -->
+  <!-- SPLUNK APP METADATA                                             -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Splunk App Metadata</title>
-      <html>
-        <![CDATA[
-        <table>
-          <tr>
-            <td><strong>Application</strong></td>
-            <td>Sandfly Security for Splunk</td>
-          </tr>
-          <tr>
-            <td><strong>Integration Type</strong></td>
-            <td>REST API (Sandfly v4)</td>
-          </tr>
-          <tr>
-            <td><strong>Data Format</strong></td>
-            <td>JSON</td>
-          </tr>
-          <tr>
-            <td><strong>Splunk Compatibility</strong></td>
-            <td>Splunk Enterprise & Splunk Cloud</td>
-          </tr>
-        </table>
-        ]]>
-      </html>
+      <title>📦 Splunk App Metadata</title>
+      <table>
+        <search>
+          <query>
+            | makeresults count=4
+            | streamstats count as row
+            | eval Key=case(
+                row=1,"Application",
+                row=2,"Integration Type",
+                row=3,"Data Format",
+                row=4,"Splunk Compatibility"
+              )
+            | eval Value=case(
+                row=1,"Sandfly Security for Splunk",
+                row=2,"REST API (Sandfly v4)",
+                row=3,"JSON",
+                row=4,"Splunk Enterprise & Splunk Cloud"
+              )
+            | table Key Value
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 4: ATTRIBUTION                                              -->
+  <!-- ATTRIBUTION                                                     -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Attribution</title>
-      <html>
-        <![CDATA[
-        <p>
-          Sandfly Security is a registered trademark of Sandfly Security, Ltd.
-        </p>
-        <p>
-          This Splunk App is an independent integration and is not an official
-          Sandfly Security product unless explicitly stated otherwise.
-        </p>
-        ]]>
-      </html>
+      <title>⚖️ Attribution</title>
+      <table>
+        <search>
+          <query>
+            | makeresults count=2
+            | streamstats count as row
+            | eval Statement=case(
+                row=1,"Sandfly Security is a registered trademark of Sandfly Security, Ltd.",
+                row=2,"This Splunk App is an independent integration and is not an official Sandfly Security product unless explicitly stated otherwise."
+              )
+            | table Statement
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 5: REFERENCES                                               -->
+  <!-- REFERENCES                                                      -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>References</title>
-      <html>
-        <![CDATA[
-        <ul>
-          <li><a href="https://www.sandflysecurity.com" target="_blank">Sandfly Security Website</a></li>
-          <li><a href="https://docs.sandflysecurity.com" target="_blank">Sandfly Documentation</a></li>
-          <li><a href="https://docs.splunk.com" target="_blank">Splunk Documentation</a></li>
-        </ul>
-        ]]>
-      </html>
+      <title>🔗 References</title>
+      <table>
+        <search>
+          <query>
+            | makeresults count=3
+            | streamstats count as row
+            | eval Name=case(
+                row=1,"Sandfly Security Website",
+                row=2,"Sandfly Documentation",
+                row=3,"Splunk Documentation"
+              )
+            | eval URL=case(
+                row=1,"https://www.sandflysecurity.com",
+                row=2,"https://docs.sandflysecurity.com",
+                row=3,"https://docs.splunk.com"
+              )
+            | table Name URL
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
     </panel>
   </row>
 
