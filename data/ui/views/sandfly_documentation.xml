@@ -15,37 +15,21 @@ Sandfly documentation and key references used by this app.
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Documentation</label>
+  <label>📚 Documentation</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: CORE DOCUMENTATION                                       -->
+  <!-- ROW 1: CORE DOCUMENTATION                                      -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Sandfly Security Documentation</title>
+      <title>📘 Sandfly Security Documentation</title>
       <html>
         <div>
           <ul>
-            <li>
-              <a href="https://docs.sandflysecurity.com" target="_blank">
-                Sandfly Security Documentation Home
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/user-interface-overview" target="_blank">
-                Sandfly User Interface Overview
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/sandflies" target="_blank">
-                Sandflies (Threat Hunting Modules)
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/ssh-hunter" target="_blank">
-                SSH Hunter
-              </a>
-            </li>
+            <li>🏠 <a href="https://docs.sandflysecurity.com" target="_blank"><strong>Sandfly Security Documentation Home</strong></a></li>
+            <li>🖥️ <a href="https://docs.sandflysecurity.com/docs/user-interface-overview" target="_blank">Sandfly User Interface Overview</a></li>
+            <li>🪰 <a href="https://docs.sandflysecurity.com/docs/sandflies" target="_blank">Sandflies (Threat Hunting Modules)</a></li>
+            <li>🔑 <a href="https://docs.sandflysecurity.com/docs/ssh-hunter" target="_blank">SSH Hunter</a></li>
           </ul>
         </div>
       </html>
@@ -53,29 +37,17 @@ Sandfly documentation and key references used by this app.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: API REFERENCES                                           -->
+  <!-- ROW 2: API REFERENCES                                          -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>API Reference</title>
+      <title>🔌 API Reference</title>
       <html>
         <div>
           <ul>
-            <li>
-              <a href="https://docs.sandflysecurity.com/reference/api-landing-page" target="_blank">
-                Sandfly REST API Reference
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/reference/apiloginrefresh" target="_blank">
-                Authentication &amp; Token Refresh
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml" target="_blank">
-                OpenAPI Specification (YAML)
-              </a>
-            </li>
+            <li>📡 <a href="https://docs.sandflysecurity.com/reference/api-landing-page" target="_blank"><strong>Sandfly REST API Reference</strong></a></li>
+            <li>🔐 <a href="https://docs.sandflysecurity.com/reference/apiloginrefresh" target="_blank">Authentication &amp; Token Refresh</a></li>
+            <li>📄 <a href="https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml" target="_blank">OpenAPI Specification (YAML)</a></li>
           </ul>
         </div>
       </html>
@@ -83,34 +55,18 @@ Sandfly documentation and key references used by this app.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: OPERATIONS & ANALYSIS                                    -->
+  <!-- ROW 3: OPERATIONS & ANALYSIS                                   -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Operations Analysis</title>
+      <title>⚙️ Operations Analysis</title>
       <html>
         <div>
           <ul>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/results" target="_blank">
-                Results, Alerts, Passes, and Errors
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/scanning" target="_blank">
-                Scanning and Schedules
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/reports" target="_blank">
-                Reports and Metrics
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.sandflysecurity.com/docs/audit-logs" target="_blank">
-                Audit and Error Logs
-              </a>
-            </li>
+            <li>📊 <a href="https://docs.sandflysecurity.com/docs/results" target="_blank">Results, Alerts, Passes, and Errors</a></li>
+            <li>⏱️ <a href="https://docs.sandflysecurity.com/docs/scanning" target="_blank">Scanning and Schedules</a></li>
+            <li>📈 <a href="https://docs.sandflysecurity.com/docs/reports" target="_blank">Reports and Metrics</a></li>
+            <li>🧾 <a href="https://docs.sandflysecurity.com/docs/audit-logs" target="_blank">Audit and Error Logs</a></li>
           </ul>
         </div>
       </html>
@@ -118,29 +74,17 @@ Sandfly documentation and key references used by this app.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 4: SPLUNK REFERENCES                                        -->
+  <!-- ROW 4: SPLUNK REFERENCES                                       -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Splunk References</title>
+      <title>🧠 Splunk References</title>
       <html>
         <div>
           <ul>
-            <li>
-              <a href="https://docs.splunk.com/Documentation/Splunk/latest/Viz/XMLDashboardReference" target="_blank">
-                Splunk Classic XML Dashboard Reference
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Propsconf" target="_blank">
-                props.conf Reference
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Transformsconf" target="_blank">
-                transforms.conf Reference
-              </a>
-            </li>
+            <li>📘 <a href="https://docs.splunk.com/Documentation/Splunk/latest/Viz/XMLDashboardReference" target="_blank">Splunk Classic XML Dashboard Reference</a></li>
+            <li>⚙️ <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Propsconf" target="_blank">props.conf Reference</a></li>
+            <li>🔄 <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Transformsconf" target="_blank">transforms.conf Reference</a></li>
           </ul>
         </div>
       </html>
