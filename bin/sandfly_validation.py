@@ -1,46 +1,34 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# =============================================================================
 # File: bin/sandfly_validation.py
-# -------------------------------------------------------------------------
-# Implementation notes
+# Sandfly Security for Splunk App
 #
-# - Sandfly token authentication:
-#     POST /v4/auth/login
+# Purpose:
+# - Validate modular input configuration at setup time
+# - Authenticate to Sandfly
+# - Enforce required role permissions
+# - Verify API reachability (GET /version)
 #
-# - Token refresh handling:
-#     POST /v4/auth/refresh
-#     * proactive refresh based on expiry
-#     * reactive refresh on HTTP 401 retry
-#
-# - Proxy support:
-#     * no proxy
-#     * proxy without authentication
-#     * proxy with username/password authentication
-#
-# - Logging:
-#     * Unix-style informational logging via Splunk validation handler
-#     * no stdout printing
-#
-# - Purpose:
-#     * Input validation for Splunk modular input configuration
-#     * Authentication and basic API reachability checks only
-#
-# - API usage:
-#     * read-only validation calls (GET /version)
-#
-# - Splunk AppInspect compliance:
-#     * no file-based logging
-#     * no persistent state outside Splunk storage
-# -------------------------------------------------------------------------
+# Design constraints:
+# - Validation only (no collection)
+# - Read-only API calls
+# - No stdout printing
+# - Raise explicit, user-facing errors
+# - Splunk AppInspect compliant
+# =============================================================================
 
 import requests
 
 
+REQUIRED_ROLES = {"admin", "api_result_read", "api_scan"}
+
+
 def validate_input(definition):
     """
-    Splunk calls this method to validate the modular input configuration
-    before enabling the input.
+    Splunk validation handler.
+    Called before the modular input is enabled.
     """
     params = definition.parameters
 
@@ -49,11 +37,17 @@ def validate_input(definition):
     password = params.get("password")
 
     verify_ssl = params.get("verify_ssl", True)
-    timeout = int(params.get("timeout", 60))
+    timeout = int(params.get("timeout") or 60)
 
     proxy_url = params.get("proxy_url")
     proxy_user = params.get("proxy_user")
     proxy_pass = params.get("proxy_pass")
+
+    if not sandfly_url:
+        raise ValueError("Sandfly URL is required")
+
+    if not username or not password:
+        raise ValueError("Username and password are required")
 
     session = requests.Session()
     session.verify = verify_ssl
@@ -67,25 +61,68 @@ def validate_input(definition):
             )
         session.proxies = {"http": proxy, "https": proxy}
 
+    # -------------------------------------------------------------------------
     # Authenticate
+    # -------------------------------------------------------------------------
     login_url = f"{sandfly_url.rstrip('/')}/v4/auth/login"
-    resp = session.post(
-        login_url,
-        auth=(username, password),
-        headers={"content-type": "application/json"},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
+    payload = {
+        "username": username,
+        "password": password,
+        "full_details": True,
+    }
 
-    token = resp.json().get("access_token")
-    if not token:
-        raise ValueError("Authentication succeeded but no access token returned")
+    try:
+        resp = session.post(
+            login_url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=timeout,
+        )
+    except Exception as e:
+        raise ValueError(f"Unable to connect to Sandfly server: {e}")
 
-    # Basic API validation
-    version_url = f"{sandfly_url.rstrip('/')}/version"
+    if resp.status_code == 401:
+        raise ValueError("Authentication failed: invalid username or password")
+
+    if resp.status_code != 200:
+        raise ValueError(
+            f"Authentication failed: HTTP {resp.status_code} - {resp.text}"
+        )
+
+    data = resp.json()
+
+    access_token = data.get("access_token")
+    if not access_token:
+        raise ValueError("Authentication succeeded but no access token was returned")
+
+    # -------------------------------------------------------------------------
+    # Role validation
+    # -------------------------------------------------------------------------
+    user = data.get("user")
+    if not user:
+        raise ValueError("Authentication response missing user details")
+
+    roles = set(user.get("roles", []))
+    if not roles:
+        raise ValueError("User has no roles assigned")
+
+    if not roles.intersection(REQUIRED_ROLES):
+        raise ValueError(
+            "Insufficient permissions: account must have at least one of "
+            + ", ".join(sorted(REQUIRED_ROLES))
+        )
+
+    # -------------------------------------------------------------------------
+    # API reachability check
+    # -------------------------------------------------------------------------
+    version_url = f"{sandfly_url.rstrip('/')}/v4/version"
     resp = session.get(
         version_url,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {access_token}"},
         timeout=timeout,
     )
-    resp.raise_for_status()
+
+    if resp.status_code != 200:
+        raise ValueError(
+            f"Sandfly API validation failed (/v4/version): HTTP {resp.status_code}"
+        )
