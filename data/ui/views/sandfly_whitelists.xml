@@ -2,42 +2,19 @@
 =============================================================================
  default/data/ui/views/sandfly_whitelists.xml
  Sandfly Security for Splunk App
- Whitelist Rules
-=============================================================================
-
-PURPOSE
-
-Displays Sandfly whitelist rules collected from:
-- GET /v4/whitelistrules
-
-Expected sourcetype:
-- sandfly:whitelistrules
-
-Key fields (per API):
-- id
-- sandfly
-- active
-- all_hosts
-- host_ids[]
-- host_tags[]
-- exclude_sandfly
-- rule_op
-- rules[]
-- comment
-- hosts_covered
-
+ 🧾 Whitelist Rules
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Whitelists</label>
+  <label>🧾 Whitelists</label>
 
   <!-- =============================================================== -->
   <!-- ROW 1: SUMMARY METRICS                                          -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Total Whitelist Rules</title>
+      <title>📋 Total Whitelist Rules</title>
       <single>
         <search>
           <query>
@@ -51,7 +28,7 @@ Key fields (per API):
     </panel>
 
     <panel>
-      <title>Active Rules</title>
+      <title>✅ Active Rules</title>
       <single>
         <search>
           <query>
@@ -66,7 +43,7 @@ Key fields (per API):
     </panel>
 
     <panel>
-      <title>Rules Covering All Hosts</title>
+      <title>🌍 Rules Covering All Hosts</title>
       <single>
         <search>
           <query>
@@ -81,7 +58,7 @@ Key fields (per API):
     </panel>
 
     <panel>
-      <title>Total Hosts Covered</title>
+      <title>🖥️ Total Hosts Covered</title>
       <single>
         <search>
           <query>
@@ -100,14 +77,14 @@ Key fields (per API):
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Whitelist Rule Inventory</title>
+      <title>📑 Whitelist Rule Inventory</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:whitelistrules
-            | eval host_scope=if(all_hosts=true, "ALL_HOSTS",
-                if(isnotnull(host_tags) AND mvcount(host_tags)&gt;0, "HOST_TAGS",
-                if(isnotnull(host_ids) AND mvcount(host_ids)&gt;0, "HOST_IDS", "UNSPECIFIED")))
+            | eval host_scope=if(all_hosts=true, "🌍 ALL_HOSTS",
+                if(isnotnull(host_tags) AND mvcount(host_tags)&gt;0, "🏷️ HOST_TAGS",
+                if(isnotnull(host_ids) AND mvcount(host_ids)&gt;0, "🆔 HOST_IDS", "❓ UNSPECIFIED")))
             | eval host_tags_list=if(isnull(host_tags), "", mvjoin(host_tags, ", "))
             | eval host_ids_list=if(isnull(host_ids), "", mvjoin(host_ids, ", "))
             | eval rules_list=if(isnull(rules), "", mvjoin(rules, " | "))
@@ -138,7 +115,7 @@ Key fields (per API):
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Coverage by Sandfly</title>
+      <title>📊 Coverage by Sandfly</title>
       <chart>
         <search>
           <query>
@@ -153,12 +130,12 @@ Key fields (per API):
     </panel>
 
     <panel>
-      <title>Rule Status Breakdown</title>
+      <title>⚙️ Rule Status Breakdown</title>
       <chart>
         <search>
           <query>
             index=* sourcetype=sandfly:whitelistrules
-            | eval status=if(active=true,"active","inactive")
+            | eval status=if(active=true,"✅ Active","⛔ Inactive")
             | stats count by status
           </query>
         </search>
