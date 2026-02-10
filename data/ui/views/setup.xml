@@ -7,22 +7,15 @@
 
 SETUP WIZARD
 
-This setup wizard performs the complete configuration of the
-Sandfly Security for Splunk App.
+This setup wizard configures the Sandfly Security for Splunk App.
 
-From the user’s perspective, the setup wizard:
+Authentication and authorization are validated during setup execution.
+The provided account MUST be either:
+- an admin user, OR
+- an API-enabled account with required api_* roles
 
-- Validates connectivity to the Sandfly Security server
-- Authenticates using provided credentials
-- Verifies required Sandfly API roles based on selected data collectors
-- Creates the specified Splunk index if it does not already exist
-- Stores credentials securely
-- Enables the selected data collectors
-- Initializes required checkpoints for streaming data
-- Enables operational logging
-- Completes setup only on success, or fails with clear errors
+Setup will fail with a clear error if permissions are insufficient.
 
-No manual configuration is required after this wizard completes.
 =============================================================================
 -->
 
@@ -30,12 +23,12 @@ No manual configuration is required after this wizard completes.
   <label>Sandfly Security – Setup</label>
 
   <description>
-    This wizard configures connectivity, storage, logging, and data
-    collection for the Sandfly Security for Splunk App.
+    Configure connectivity, storage, logging, and data collection
+    for the Sandfly Security for Splunk App.
   </description>
 
   <!-- =============================================================== -->
-  <!-- STEP 1: SANDFLY SERVER CONNECTION                                -->
+  <!-- STEP 1: SANDFLY SERVER CONNECTION                               -->
   <!-- =============================================================== -->
   <fieldset>
     <legend>Sandfly Server Connection</legend>
@@ -56,6 +49,19 @@ No manual configuration is required after this wizard completes.
     <input type="password" token="sandfly_password">
       <label>Password</label>
     </input>
+
+    <html>
+      <![CDATA[
+      <p>
+        <strong>Required permissions:</strong><br/>
+        The account must be an <b>admin</b> user or an API-enabled account
+        with the required <code>api_*</code> roles.
+      </p>
+      <p>
+        Setup will fail if the account does not meet these requirements.
+      </p>
+      ]]>
+    </html>
   </fieldset>
 
   <!-- =============================================================== -->
@@ -67,7 +73,6 @@ No manual configuration is required after this wizard completes.
     <input type="text" token="target_index">
       <label>Target Index</label>
       <help>
-        Enter the name of the Splunk index where Sandfly data will be stored.
         The index will be created during setup if it does not already exist.
       </help>
     </input>
@@ -88,8 +93,8 @@ No manual configuration is required after this wizard completes.
 
     <html>
       <p>
-        When enabled, the app writes informational messages to Splunk
-        internal logs to support troubleshooting and operational monitoring.
+        When enabled, the app writes operational messages to Splunk
+        internal logs for troubleshooting and monitoring.
       </p>
     </html>
   </fieldset>
@@ -122,7 +127,7 @@ No manual configuration is required after this wizard completes.
   </fieldset>
 
   <!-- =============================================================== -->
-  <!-- STEP 5: DATA COLLECTION SELECTION                                -->
+  <!-- STEP 5: DATA COLLECTION SELECTION                               -->
   <!-- =============================================================== -->
   <fieldset>
     <legend>Data Collection</legend>
@@ -130,29 +135,24 @@ No manual configuration is required after this wizard completes.
     <input type="checkbox" token="collectors">
       <label>Select Data to Collect</label>
 
-      <!-- Core inventory -->
       <choice value="hosts">Hosts</choice>
       <choice value="hosts_info">Host Details</choice>
       <choice value="users">Users</choice>
       <choice value="credentials">Credentials</choice>
       <choice value="jumphosts">Jump Hosts</choice>
 
-      <!-- Results / Drift -->
       <choice value="results">Results Stream</choice>
       <choice value="results_timeline">Results Timeline</choice>
       <choice value="results_summary">Results Summary</choice>
       <choice value="resultprofiles">Drift Detection Profiles</choice>
 
-      <!-- Sandflies -->
       <choice value="sandflies">Sandflies</choice>
 
-      <!-- SSH Hunter -->
       <choice value="sshhunter_summary">SSH Hunter Summary</choice>
       <choice value="sshhunter_keys">SSH Hunter Keys</choice>
       <choice value="sshhunter_users">SSH Hunter Users</choice>
       <choice value="sshhunter_hosts">SSH Hunter Hosts</choice>
 
-      <!-- Operations / Admin -->
       <choice value="scan">Scanning</choice>
       <choice value="schedule">Schedules</choice>
       <choice value="alerts_email">Email Alerts</choice>
@@ -176,8 +176,11 @@ No manual configuration is required after this wizard completes.
 
     <html>
       <p>
-        Click <b>Finish</b> to validate configuration, create required
-        resources, enable logging, and begin data collection.
+        Click <b>Finish</b> to authenticate, validate permissions,
+        create required resources, and begin data collection.
+      </p>
+      <p>
+        Setup completes only on success. Errors are returned if validation fails.
       </p>
     </html>
   </fieldset>
