@@ -1,8 +1,8 @@
 <!--
 =============================================================================
- default/data/ui/views/sandfly_documentation.xml
- Sandfly Security for Splunk App
- Documentation Hub
+default/data/ui/views/sandfly_documentation.xml
+Sandfly Security for Splunk App
+Documentation Hub
 =============================================================================
 
 PURPOSE
@@ -23,62 +23,30 @@ Sandfly documentation and key references used by this app.
   <row>
     <panel>
       <title>Sandfly Security Documentation</title>
-      <html>
-        <![CDATA[
-        <ul>
-          <li>
-            <a href="https://docs.sandflysecurity.com" target="_blank">
-              Sandfly Security Documentation Home
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/user-interface-overview" target="_blank">
-              Sandfly User Interface Overview
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/sandflies" target="_blank">
-              Sandflies (Threat Hunting Modules)
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/ssh-hunter" target="_blank">
-              SSH Hunter
-            </a>
-          </li>
-        </ul>
-        ]]>
-      </html>
+      <html><![CDATA[
+<ul>
+  <li><a href="https://docs.sandflysecurity.com" target="_blank">Sandfly Security Documentation Home</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/user-interface-overview" target="_blank">Sandfly User Interface Overview</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/sandflies" target="_blank">Sandflies (Threat Hunting Modules)</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/ssh-hunter" target="_blank">SSH Hunter</a></li>
+</ul>
+      ]]></html>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: API REFERENCES                                          -->
+  <!-- ROW 2: API REFERENCES                                           -->
   <!-- =============================================================== -->
   <row>
     <panel>
       <title>API Reference</title>
-      <html>
-        <![CDATA[
-        <ul>
-          <li>
-            <a href="https://docs.sandflysecurity.com/reference/api-landing-page" target="_blank">
-              Sandfly REST API Reference
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/reference/apiloginrefresh" target="_blank">
-              Authentication & Token Refresh
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml" target="_blank">
-              OpenAPI Specification (YAML)
-            </a>
-          </li>
-        </ul>
-        ]]>
-      </html>
+      <html><![CDATA[
+<ul>
+  <li><a href="https://docs.sandflysecurity.com/reference/api-landing-page" target="_blank">Sandfly REST API Reference</a></li>
+  <li><a href="https://docs.sandflysecurity.com/reference/apiloginrefresh" target="_blank">Authentication & Token Refresh</a></li>
+  <li><a href="https://docs.sandflysecurity.com/v5.6.0/openapi/openapi-public.yaml" target="_blank">OpenAPI Specification (YAML)</a></li>
+</ul>
+      ]]></html>
     </panel>
   </row>
 
@@ -87,33 +55,15 @@ Sandfly documentation and key references used by this app.
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Operations & Analysis</title>
-      <html>
-        <![CDATA[
-        <ul>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/results" target="_blank">
-              Results, Alerts, Passes, and Errors
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/scanning" target="_blank">
-              Scanning and Schedules
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/reports" target="_blank">
-              Reports and Metrics
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.sandflysecurity.com/docs/audit-logs" target="_blank">
-              Audit and Error Logs
-            </a>
-          </li>
-        </ul>
-        ]]>
-      </html>
+      <title>Operations Analysis</title>
+      <html><![CDATA[
+<ul>
+  <li><a href="https://docs.sandflysecurity.com/docs/results" target="_blank">Results, Alerts, Passes, and Errors</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/scanning" target="_blank">Scanning and Schedules</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/reports" target="_blank">Reports and Metrics</a></li>
+  <li><a href="https://docs.sandflysecurity.com/docs/audit-logs" target="_blank">Audit and Error Logs</a></li>
+</ul>
+      ]]></html>
     </panel>
   </row>
 
@@ -123,27 +73,13 @@ Sandfly documentation and key references used by this app.
   <row>
     <panel>
       <title>Splunk References</title>
-      <html>
-        <![CDATA[
-        <ul>
-          <li>
-            <a href="https://docs.splunk.com/Documentation/Splunk/latest/Viz/XMLDashboardReference" target="_blank">
-              Splunk Classic XML Dashboard Reference
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Propsconf" target="_blank">
-              props.conf Reference
-            </a>
-          </li>
-          <li>
-            <a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Transformsconf" target="_blank">
-              transforms.conf Reference
-            </a>
-          </li>
-        </ul>
-        ]]>
-      </html>
+      <html><![CDATA[
+<ul>
+  <li><a href="https://docs.splunk.com/Documentation/Splunk/latest/Viz/XMLDashboardReference" target="_blank">Splunk Classic XML Dashboard Reference</a></li>
+  <li><a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Propsconf" target="_blank">props.conf Reference</a></li>
+  <li><a href="https://docs.splunk.com/Documentation/Splunk/latest/Admin/Transformsconf" target="_blank">transforms.conf Reference</a></li>
+</ul>
+      ]]></html>
     </panel>
   </row>
 
