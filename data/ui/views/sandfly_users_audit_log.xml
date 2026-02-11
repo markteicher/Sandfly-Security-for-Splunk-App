@@ -1,0 +1,100 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_users_audit_log.xml
+ Sandfly Security for Splunk App
+ 👤 Users — Audit Log
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>👤 Users — Audit Log</label>
+
+  <description>
+    Audit-focused visibility into Sandfly user authentication activity,
+    role usage, and account dormancy.
+  </description>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: SUMMARY INDICATORS                                       -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>👥 Total Users</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | stats count
+          </query>
+        </search>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🔴 Dormant Users (90+ Days)</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users
+            | spath
+            | eval last_login_epoch=strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+            | eval days_since_login=round((now()-last_login_epoch)/86400,0)
+            | where days_since_login &gt;= 90 OR isnull(last_login_epoch)
+            | stats count
+          </query>
+        </search>
+      </single>
+    </panel>
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: USER ACTIVITY AUDIT LOG                                  -->
+  <!-- =============================================================== -->
+  <row>
+    <panel>
+      <title>🕵️ User Activity Audit Log</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:users earliest=0
+            | spath
+            | eval last_login_epoch=case(
+                isnull(last_login_date) OR last_login_date="",
+                null(),
+                1=1, strptime(last_login_date,"%Y-%m-%dT%H:%M:%S.%3NZ")
+              )
+            | eval days_since_login=if(
+                isnull(last_login_epoch),
+                null(),
+                round((now()-last_login_epoch)/86400,0)
+              )
+            | eval login_status=case(
+                isnull(days_since_login), "⚫ Never Logged In",
+                days_since_login &lt; 30, "🟢 Active",
+                days_since_login &lt; 90, "🟠 Stale",
+                days_since_login &gt;= 90, "🔴 Dormant"
+              )
+            | eval auth_method=if(sso=true,"🔐 SSO","🔑 Local")
+            | table
+                username
+                email
+                full_name
+                roles
+                auth_method
+                login_status
+                days_since_login
+                last_login_date
+                last_login_ip
+                created_date
+            | sort - last_login_epoch
+          </query>
+        </search>
+
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="count">50</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
