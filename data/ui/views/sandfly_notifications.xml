@@ -1,0 +1,187 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_notifications.xml
+ Sandfly Security for Splunk App
+ Notifications
+=============================================================================
+
+PURPOSE
+
+Displays Sandfly notification configurations retrieved from:
+
+  GET /v4/notifications
+
+Data source:
+  sourcetype=sandfly:notifications
+
+Fields used (API accurate):
+  id
+  name
+  event
+  delivery
+  hosts_tags_include
+  hosts_tags_exclude
+  paused
+
+=============================================================================
+-->
+
+<dashboard version="1.1" theme="light">
+  <label>🔔 Notifications</label>
+
+  <!-- =============================================================== -->
+  <!-- ROW 1: EXECUTIVE SUMMARY                                        -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🔔 Total Notifications</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>⏸️ Paused Notifications</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | search paused=true
+            | stats count
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>🏷️ Tag-Scoped Notifications</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | eval scoped=if(mvcount(hosts_tags_include)&gt;0 OR mvcount(hosts_tags_exclude)&gt;0,1,0)
+            | stats sum(scoped)
+          </query>
+        </search>
+        <option name="useColors">true</option>
+        <option name="colorMode">block</option>
+      </single>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 2: EVENT & DELIVERY DISTRIBUTION                            -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📊 Event Distribution</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | stats count by event
+            | sort - count
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>🚚 Delivery Method Breakdown</title>
+      <chart>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | stats count by delivery
+            | sort - count
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 3: RISK & MISCONFIGURATION FLAGS                            -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>🚨 Potential Configuration Issues</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | eval zero_scope=if(
+                mvcount(hosts_tags_include)=0 AND mvcount(hosts_tags_exclude)=0,
+                "⚠️ No Tag Scope",
+                ""
+              )
+            | eval overlap=if(
+                mvfind(hosts_tags_include, hosts_tags_exclude)&gt;=0,
+                "⚠️ Overlapping Tags",
+                ""
+              )
+            | eval broad_paused=if(
+                paused=true AND zero_scope="⚠️ No Tag Scope",
+                "⚠️ Paused but Broad",
+                ""
+              )
+            | table id name event delivery paused zero_scope overlap broad_paused
+            | sort name
+          </query>
+        </search>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+  <!-- =============================================================== -->
+  <!-- ROW 4: FULL INVENTORY                                           -->
+  <!-- =============================================================== -->
+  <row>
+
+    <panel>
+      <title>📋 Notification Inventory</title>
+      <table>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:notifications
+            | eval include_tags=if(isnull(hosts_tags_include),"",mvjoin(hosts_tags_include,", "))
+            | eval exclude_tags=if(isnull(hosts_tags_exclude),"",mvjoin(hosts_tags_exclude,", "))
+            | table
+                id
+                name
+                event
+                delivery
+                paused
+                include_tags
+                exclude_tags
+            | sort name
+          </query>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+
+  </row>
+
+</dashboard>
