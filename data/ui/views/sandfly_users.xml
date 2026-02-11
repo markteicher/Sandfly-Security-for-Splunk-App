@@ -2,67 +2,68 @@
 =============================================================================
  default/data/ui/views/sandfly_users.xml
  Sandfly Security for Splunk App
- Users & Access Overview
+ Users
 =============================================================================
 
 PURPOSE
 
-Displays all Sandfly users retrieved from the /v4/users API endpoint and
-ingested into Splunk as sandfly:users events.
+Inventory view of all Sandfly users retrieved from the /v4/users API endpoint
+and ingested into Splunk as sourcetype=sandfly:users.
 
-This view supports both executive oversight and operational review by
-answering:
+This view answers:
 
 - Who has access to Sandfly?
 - What roles are assigned?
 - Are users authenticating via SSO?
-- When did users last log in?
-- Are there failed login patterns?
+- When were accounts created?
+- Are there repeated failed login attempts?
 
 All fields displayed are sourced directly from the Sandfly API response.
+No inferred risk scoring or enrichment is applied.
+
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Users</label>
+  <label>👥 Users</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: EXECUTIVE SUMMARY                                        -->
+  <!-- ROW 1: SUMMARY METRICS                                          -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Total Users</title>
+      <title>👤 Total Users</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | stats dc(username)
+            | stats dc(username) as total_users
           </query>
         </search>
       </single>
     </panel>
 
     <panel>
-      <title>SSO Users</title>
+      <title>🔐 SSO Users</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:users
             | search sso=true
-            | stats count
+            | stats count as sso_users
           </query>
         </search>
       </single>
     </panel>
 
     <panel>
-      <title>Users with Failed Logins</title>
+      <title>🚨 Users with Failed Logins</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | search logins_failed_count > 0
-            | stats count
+            | search logins_failed_count &gt; 0
+            | stats count as users_with_failures
           </query>
         </search>
       </single>
@@ -74,13 +75,14 @@ All fields displayed are sourced directly from the Sandfly API response.
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>User Roles Distribution</title>
+      <title>🧩 User Roles Distribution</title>
       <chart>
         <search>
           <query>
             index=* sourcetype=sandfly:users
             | mvexpand roles
             | stats count by roles
+            | sort - count
           </query>
         </search>
         <option name="charting.chart">pie</option>
@@ -90,11 +92,11 @@ All fields displayed are sourced directly from the Sandfly API response.
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: USER DETAILS                                             -->
+  <!-- ROW 3: USER INVENTORY                                           -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>User Accounts</title>
+      <title>📋 User Inventory</title>
       <table>
         <search>
           <query>
@@ -105,30 +107,32 @@ All fields displayed are sourced directly from the Sandfly API response.
                 email
                 roles
                 sso
+                created_date
                 last_login_date
                 last_login_ip
                 logins_failed_count
-                created_date
-            | sort username
+            | sort - created_date
           </query>
         </search>
+
         <option name="wrap">true</option>
         <option name="rowNumbers">true</option>
+        <option name="count">50</option>
       </table>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 4: FAILED LOGIN CONTEXT                                     -->
+  <!-- ROW 4: FAILED LOGIN DETAILS                                     -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Failed Login Details</title>
+      <title>⚠️ Failed Login Details</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:users
-            | search logins_failed_count > 0
+            | search logins_failed_count &gt; 0
             | table
                 username
                 logins_failed_count
@@ -136,7 +140,9 @@ All fields displayed are sourced directly from the Sandfly API response.
             | sort - logins_failed_count
           </query>
         </search>
+
         <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
       </table>
     </panel>
   </row>
