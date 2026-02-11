@@ -7,14 +7,11 @@
 
 PURPOSE
 
-Provides visibility into Sandfly email alert configurations, including:
-- Overall alert coverage
-- Recipient and mail server concentration
-- Misconfigurations and operational risk
-- Mail authentication posture
+Provides visibility into Sandfly email alert configurations.
 
-This view is designed to be understandable by executives while remaining
-actionable for operators and administrators.
+Data Source:
+- GET /v4/alerts/email
+- Sourcetype: sandfly:alerts:email
 
 =============================================================================
 -->
@@ -23,9 +20,10 @@ actionable for operators and administrators.
   <label>📧 Email Alerts</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: EXECUTIVE OVERVIEW METRICS                               -->
+  <!-- ROW 1: EXECUTIVE OVERVIEW                                       -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
       <title>📧 Total Email Alerts</title>
       <single>
@@ -35,8 +33,6 @@ actionable for operators and administrators.
             | stats count
           </query>
         </search>
-        <option name="colorMode">block</option>
-        <option name="useColors">true</option>
       </single>
     </panel>
 
@@ -50,8 +46,6 @@ actionable for operators and administrators.
             | stats dc(email_recipients)
           </query>
         </search>
-        <option name="colorMode">block</option>
-        <option name="useColors">true</option>
       </single>
     </panel>
 
@@ -64,57 +58,61 @@ actionable for operators and administrators.
             | stats dc(mail_server)
           </query>
         </search>
-        <option name="colorMode">block</option>
-        <option name="useColors">true</option>
       </single>
     </panel>
 
     <panel>
-      <title>⚠️ Misconfigured Alerts</title>
+      <title>⚠️ Potentially Misconfigured Alerts</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
-            | eval misconfigured=if(
-                isnull(email_recipients) OR email_recipients="[]" 
-                OR isnull(email_sender) 
-                OR isnull(mail_server),
-                1, 0
-              )
-            | stats sum(misconfigured)
+            | eval missing_recipients=if(mvcount(email_recipients)=0,1,0)
+            | eval missing_sender=if(isnull(email_sender) OR email_sender="",1,0)
+            | eval missing_server=if(isnull(mail_server) OR mail_server="",1,0)
+            | eval misconfigured=if(missing_recipients=1 OR missing_sender=1 OR missing_server=1,1,0)
+            | stats sum(misconfigured) as misconfigured_alerts
           </query>
         </search>
-        <option name="colorMode">block</option>
-        <option name="useColors">true</option>
       </single>
     </panel>
+
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: ALERT CONFIGURATION RISKS                                -->
+  <!-- ROW 2: CONFIGURATION DETAILS                                    -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>⚠️ Alert Configuration Risks</title>
+      <title>⚙️ Alert Configuration Review</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:alerts:email
-            | eval recipients_ok=if(isnull(email_recipients) OR email_recipients="[]","❌","✅")
-            | eval sender_ok=if(isnull(email_sender),"❌","✅")
-            | eval port_ok=if(mail_port=587,"✅","⚠️")
-            | table name recipients_ok sender_ok mail_server mail_port port_ok
+            | eval recipients_status=if(mvcount(email_recipients)>0,"✅","❌")
+            | eval sender_status=if(isnull(email_sender) OR email_sender="","❌","✅")
+            | eval auth_configured=if(isnull(mail_username) OR mail_username="","❌","✅")
+            | table
+                name
+                email_sender
+                mail_server
+                mail_port
+                recipients_status
+                sender_status
+                auth_configured
           </query>
         </search>
         <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
       </table>
     </panel>
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 3: RECIPIENT & SERVER CONCENTRATION                         -->
+  <!-- ROW 3: DISTRIBUTION ANALYSIS                                    -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
       <title>📊 Recipient Distribution</title>
       <chart>
@@ -145,25 +143,7 @@ actionable for operators and administrators.
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
-  </row>
 
-  <!-- =============================================================== -->
-  <!-- ROW 4: MAIL AUTHENTICATION POSTURE                              -->
-  <!-- =============================================================== -->
-  <row>
-    <panel>
-      <title>🔐 Mail Authentication Posture</title>
-      <table>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:alerts:email
-            | eval auth_configured=if(isnull(mail_username),"❌","✅")
-            | table name mail_server mail_port auth_configured
-          </query>
-        </search>
-        <option name="wrap">true</option>
-      </table>
-    </panel>
   </row>
 
 </dashboard>
