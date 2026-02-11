@@ -6,21 +6,23 @@
 =============================================================================
 
 Operational overview of Sandfly Security data ingested into Splunk.
-Displays host counts, result activity, alert/error volume, scan activity,
-and ingestion health using Sandfly sourcetypes.
+
+Displays host counts, alert/error activity, audit volume,
+and ingestion health using defined Sandfly sourcetypes.
 
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Sandfly Overview</label>
+  <label>🪱 Sandfly Overview</label>
 
   <!-- =============================================================== -->
   <!-- ROW 1: KEY METRICS                                              -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Total Hosts</title>
+      <title>🖥️ Total Hosts</title>
       <single>
         <search>
           <query>
@@ -34,12 +36,12 @@ and ingestion health using Sandfly sourcetypes.
     </panel>
 
     <panel>
-      <title>Active Alerts (Last 24h)</title>
+      <title>🚨 Active Alerts (Last 24h)</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:results earliest=-24h
-            | search result_type=alert
+            | search result_type="alert"
             | stats count
           </query>
         </search>
@@ -49,12 +51,12 @@ and ingestion health using Sandfly sourcetypes.
     </panel>
 
     <panel>
-      <title>Error Results (Last 24h)</title>
+      <title>❌ Error Results (Last 24h)</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:results earliest=-24h
-            | search result_type=error
+            | search result_type="error"
             | stats count
           </query>
         </search>
@@ -64,11 +66,19 @@ and ingestion health using Sandfly sourcetypes.
     </panel>
 
     <panel>
-      <title>Events Ingested (24h)</title>
+      <title>📦 Total Events (24h)</title>
       <single>
         <search>
           <query>
-            index=* sourcetype=sandfly:* earliest=-24h
+            index=* earliest=-24h sourcetype IN (
+              sandfly:hosts,
+              sandfly:results,
+              sandfly:users,
+              sandfly:audit,
+              sandfly:resultprofiles,
+              sandfly:alerts:email,
+              sandfly:notifications
+            )
             | stats count
           </query>
         </search>
@@ -76,14 +86,16 @@ and ingestion health using Sandfly sourcetypes.
         <option name="useColors">true</option>
       </single>
     </panel>
+
   </row>
 
   <!-- =============================================================== -->
   <!-- ROW 2: RESULT ACTIVITY                                          -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Sandfly Results Over Time</title>
+      <title>📈 Results Over Time</title>
       <chart>
         <search>
           <query>
@@ -97,30 +109,33 @@ and ingestion health using Sandfly sourcetypes.
     </panel>
 
     <panel>
-      <title>Results by Type (Last 24h)</title>
+      <title>📊 Results by Type (Last 24h)</title>
       <chart>
         <search>
           <query>
             index=* sourcetype=sandfly:results earliest=-24h
             | stats count by result_type
+            | sort - count
           </query>
         </search>
         <option name="charting.chart">pie</option>
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
+
   </row>
 
   <!-- =============================================================== -->
   <!-- ROW 3: OPERATIONAL ACTIVITY                                     -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Recent Audit Events</title>
+      <title>📜 Recent Audit Events</title>
       <table>
         <search>
           <query>
-            index=* sourcetype=sandfly:logs:audit
+            index=* sourcetype=sandfly:audit
             | sort - _time
             | head 10
           </query>
@@ -130,11 +145,11 @@ and ingestion health using Sandfly sourcetypes.
     </panel>
 
     <panel>
-      <title>Recent Scan Activity</title>
+      <title>👥 Recent User Activity</title>
       <table>
         <search>
           <query>
-            index=* sourcetype=sandfly:scan earliest=-24h
+            index=* sourcetype=sandfly:users
             | sort - _time
             | head 10
           </query>
@@ -142,24 +157,27 @@ and ingestion health using Sandfly sourcetypes.
         <option name="wrap">true</option>
       </table>
     </panel>
+
   </row>
 
   <!-- =============================================================== -->
   <!-- ROW 4: INGESTION HEALTH                                         -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Events by Sourcetype (24h)</title>
+      <title>📊 Events by Sourcetype (24h)</title>
       <table>
         <search>
           <query>
-            index=* sourcetype=sandfly:* earliest=-24h
+            index=* earliest=-24h sourcetype=sandfly:*
             | stats count by sourcetype
             | sort - count
           </query>
         </search>
       </table>
     </panel>
+
   </row>
 
 </dashboard>
