@@ -8,25 +8,25 @@
 PURPOSE
 
 Displays Drift Detection profiles used by Sandfly to detect configuration
-and behavioral changes across hosts. This view surfaces profile inventory,
-profile status, and recent drift-related activity.
+and behavioral drift across hosts.
 
-Data source:
-- Drift profiles API
-- sourcetype: sandfly:resultprofiles
+Data Source:
+- GET /v4/resultprofiles
+- Sourcetype: sandfly:resultprofiles
 
 =============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Drift Detection Profiles</label>
+  <label>🧬 Drift Detection Profiles</label>
 
   <!-- =============================================================== -->
-  <!-- ROW 1: PROFILE COUNTS                                          -->
+  <!-- ROW 1: PROFILE SUMMARY                                         -->
   <!-- =============================================================== -->
   <row>
+
     <panel>
-      <title>Total Drift Profiles</title>
+      <title>📦 Total Drift Profiles</title>
       <single>
         <search>
           <query>
@@ -34,74 +34,60 @@ Data source:
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
-        <option name="colorMode">block</option>
       </single>
     </panel>
 
     <panel>
-      <title>Profiles with Auto Drift Enabled</title>
+      <title>⏸️ Paused Profiles</title>
       <single>
         <search>
           <query>
             index=* sourcetype=sandfly:resultprofiles
-            | search autodrift=true
+            | search paused=true
             | stats count
           </query>
         </search>
-        <option name="useColors">true</option>
-        <option name="colorMode">block</option>
       </single>
     </panel>
+
+    <panel>
+      <title>▶️ Scheduled for Scan</title>
+      <single>
+        <search>
+          <query>
+            index=* sourcetype=sandfly:resultprofiles
+            | search scan_schedule=true
+            | stats count
+          </query>
+        </search>
+      </single>
+    </panel>
+
   </row>
 
   <!-- =============================================================== -->
-  <!-- ROW 2: PROFILE INVENTORY                                      -->
+  <!-- ROW 2: PROFILE INVENTORY                                       -->
   <!-- =============================================================== -->
   <row>
     <panel>
-      <title>Drift Profiles</title>
+      <title>📋 Drift Profile Inventory</title>
       <table>
         <search>
           <query>
             index=* sourcetype=sandfly:resultprofiles
             | table
-                _time
                 id
                 name
-                sandfly
-                autodrift
-                created_date
-                updated_date
+                description
+                type
+                state
+                paused
+                scan_schedule
+                create_date
+                hosts_covered_whitelist
+                hosts_covered_drift
+                total_sandflies
             | sort name
-          </query>
-        </search>
-        <option name="wrap">true</option>
-        <option name="rowNumbers">true</option>
-      </table>
-    </panel>
-  </row>
-
-  <!-- =============================================================== -->
-  <!-- ROW 3: RECENT DRIFT RESULTS                                   -->
-  <!-- =============================================================== -->
-  <row>
-    <panel>
-      <title>Recent Drift Results</title>
-      <table>
-        <search>
-          <query>
-            index=* sourcetype=sandfly:results
-            | search result_type=alert
-            | search sandfly=*drift*
-            | sort - _time
-            | table
-                _time
-                host
-                sandfly
-                message
-                severity
-            | head 50
           </query>
         </search>
         <option name="wrap">true</option>
