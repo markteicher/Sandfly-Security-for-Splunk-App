@@ -4,57 +4,20 @@
  Sandfly Security for Splunk App
  User Activity Deltas (DoD / WoW / MoM)
 =============================================================================
-
-PURPOSE
-
-This dashboard provides executive-friendly change metrics (deltas) for Sandfly
-user activity and access posture over time, derived from Sandfly /v4/users data.
-
-This view answers:
-
-- How many users exist today, and how is that changing (DoD / WoW / MoM)?
-- Are admin users increasing?
-- Are SSO-disabled accounts increasing (higher risk)?
-- Are never-logged-in accounts accumulating?
-- How is inactivity trending (30/60/90/180/365 days)?
-- What are the highest-risk user conditions right now?
-
-DATA SOURCE
-
-- /v4/users  → sourcetype=sandfly:users
-  Expected event shape (per user record):
-    created_date (ISO 8601)
-    last_login_date (ISO 8601 or null/empty)
-    last_login_ip
-    email
-    full_name
-    roles (array)
-    sso (boolean)
-    username
-
-NOTES
-
-- All time math is performed in Splunk SPL using explicit time windows.
-- Deltas compare current window vs previous window:
-    DoD:  last 24h vs prior 24h
-    WoW:  last 7d  vs prior 7d
-    MoM:  last 30d vs prior 30d
-- SPL uses explicit spath everywhere for nested/JSON fields.
-
-=============================================================================
 -->
 
 <dashboard version="1.1" theme="light">
-  <label>Users — Activity Deltas</label>
+  <label>📈 Users — Activity Deltas</label>
 
   <description>
-    Executive change metrics for Sandfly user posture: totals, admins, SSO-disabled,
-    never-logged-in, and inactivity drift (DoD / WoW / MoM), derived from sandfly:users.
+    Executive change metrics for Sandfly user posture: totals, admins,
+    SSO-disabled users, never-logged-in users, and access drift over time
+    (DoD / WoW / MoM).
   </description>
 
-  <!-- =================================================================== -->
-  <!-- ROW 1: TOTAL USERS DELTA                                           -->
-  <!-- =================================================================== -->
+  <!-- =============================================================== -->
+  <!-- ROW 1: TOTAL USERS DELTA                                       -->
+  <!-- =============================================================== -->
   <row>
     <panel>
       <title>👤 Total Users (DoD / WoW / MoM)</title>
@@ -97,9 +60,9 @@ NOTES
     </panel>
   </row>
 
-  <!-- =================================================================== -->
-  <!-- ROW 2: ADMIN USERS DELTA                                           -->
-  <!-- =================================================================== -->
+  <!-- =============================================================== -->
+  <!-- ROW 2: ADMIN USERS DELTA                                       -->
+  <!-- =============================================================== -->
   <row>
     <panel>
       <title>🔐 Admin Users (DoD / WoW / MoM)</title>
@@ -113,7 +76,7 @@ NOTES
                 strptime(created_date,"%Y-%m-%dT%H:%M:%SZ")
               )
             | eval now_epoch=now()
-            | eval is_admin=if(match(tostring(roles),"admin"),1,0)
+            | eval is_admin=if(mvfind(roles,"admin")&gt;=0,1,0)
 
             | eval in_dod=created_epoch>=now_epoch-86400
             | eval in_prev_dod=created_epoch>=now_epoch-172800 AND created_epoch<now_epoch-86400
@@ -143,9 +106,9 @@ NOTES
     </panel>
   </row>
 
-  <!-- =================================================================== -->
-  <!-- ROW 3: SSO DISABLED + NEVER LOGGED IN                               -->
-  <!-- =================================================================== -->
+  <!-- =============================================================== -->
+  <!-- ROW 3: SSO DISABLED + NEVER LOGGED IN                           -->
+  <!-- =============================================================== -->
   <row>
     <panel>
       <title>🔓 SSO Disabled (DoD / WoW / MoM)</title>
@@ -159,7 +122,7 @@ NOTES
                 strptime(created_date,"%Y-%m-%dT%H:%M:%SZ")
               )
             | eval now_epoch=now()
-            | eval sso_disabled=if(sso=false,1,0)
+            | eval sso_disabled=if(isnotnull(sso) AND sso="false",1,0)
 
             | eval in_dod=created_epoch>=now_epoch-86400
             | eval in_prev_dod=created_epoch>=now_epoch-172800 AND created_epoch<now_epoch-86400
@@ -189,7 +152,7 @@ NOTES
     </panel>
 
     <panel>
-      <title>🕳️ Never Logged In (Current)</title>
+      <title>🕳️ Never Logged In</title>
       <table>
         <search>
           <query>
