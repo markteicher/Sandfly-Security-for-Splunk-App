@@ -606,15 +606,11 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | GET | /credentials/:id | Y | Y | Y | Y | |
 | POST | /credentials/:id | Y | Y | | | |
 | PUT | /credentials/:id | Y | Y | | | |
-| DELETE | /credentials | Y | Y | | | |
-| DELETE | /credentials/:id | Y | Y | | | |
 | GET | /hosts | Y | Y | Y | Y | |
 | GET | /hosts/:id | Y | Y | Y | Y | |
 | POST | /hosts | Y | Y | | | |
 | POST | /hosts/retry | Y | Y | | | |
 | PUT | /hosts/:id | Y | Y | | | |
-| DELETE | /hosts | Y | Y | | | |
-| DELETE | /hosts/:id | Y | Y | | | |
 | PUT | /hosts/tags | Y | Y | | | |
 | GET | /hosts/:id/info/kernelmodules | Y | Y | Y | Y | |
 | GET | /hosts/:id/info/lastlog | Y | Y | Y | Y | |
@@ -629,20 +625,16 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | GET | /jumphosts/:id | Y | Y | Y | Y | |
 | POST | /jumphosts/:id | Y | Y | | | |
 | PUT | /jumphosts/:id | Y | Y | | | |
-| DELETE | /jumphosts | Y | Y | | | |
-| DELETE | /jumphosts/:id | Y | Y | | | |
 | GET | /llmanalysis | Y | Y | | | |
 | GET | /llmanalysis/:id | Y | Y | | | |
 | POST | /llmanalysis | Y | Y | | | |
 | PUT | /llmanalysis/:id/chat | Y | Y | | | |
 | GET | /llmanalysis/:id/wait | Y | Y | | | |
-| DELETE | /llmanalysis/:id | Y | Y | | | |
 | POST | /llmanalysis/bulkdelete | Y | Y | | | |
 | GET | /notifications | Y | Y | | | |
 | GET | /notifications/:id | Y | | | | |
 | POST | /notifications | Y | | | | |
 | PUT | /notifications/:id | Y | | | | |
-| DELETE | /notifications/:id | Y | | | | |
 | PUT | /notifications/pause/:id | Y | | | | |
 | PUT | /notifications/unpause/:id | Y | | | | |
 | POST | /notifications/test/:id | Y | | | | |
@@ -651,27 +643,19 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | GET | /results/:id | Y | Y | Y | | |
 | POST | /results | Y | Y | Y | | |
 | POST | /results/timeline | Y | Y | Y | | |
-| DELETE | /results/:id | Y | Y | | | |
-| DELETE | /results | Y | Y | | | |
-| DELETE | /results/all | Y | Y | | | |
 | GET | /results/getMaxID | Y | Y | Y | | |
 | POST | /results/delete/hostsandflies | Y | Y | | | |
 | POST | /results/delete/sandflyhosts | Y | Y | | | |
 | GET | /resultprofiles | Y | Y | | | |
 | GET | /resultprofiles/:id | Y | Y | | | |
 | GET | /resultprofiles/:id/sandfly/:sandfly | Y | Y | | | |
-| DELETE | /resultprofiles/:id/sandfly/:sandfly | Y | Y | | | |
-| DELETE | /resultprofiles/:id/sandfly/:sandfly/:hash | Y | Y | | | |
 | POST | /resultprofiles/:id/sandfly/:sandfly/deleteresults | Y | Y | | | |
 | PUT | /resultprofiles/:id | Y | Y | | | |
 | GET | /resultprofiles/host/:hostid | Y | Y | | | |
-| DELETE | /resultprofiles/:id | Y | Y | | | |
 | POST | /resultprofilesDelete | Y | Y | | | |
 | POST | /resultprofiles | Y | Y | | | |
 | POST | /resultprofiles/:id/append | Y | Y | | | |
 | POST | /resultprofiles/:id/deletesandflies | Y | Y | | | |
-| DELETE | /resultprofiles/autodrift/:id/gather | Y | Y | | | |
-| DELETE | /resultprofiles/autodrift/:id/schedule | Y | Y | | | |
 | PUT | /resultprofiles/autodrift/:id/restartgather | Y | Y | | | |
 | PUT | /resultprofiles/autodrift/:id/enforce | Y | Y | | | |
 | PUT | /resultprofiles/autodrift/:id | Y | Y | | | |
@@ -686,13 +670,10 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | POST | /sandflies | Y | Y | | | |
 | PUT | /sandflies | Y | Y | | | |
 | PUT | /sandflies/response/:id | Y | Y | | | |
-| DELETE | /sandflies/name/:id | Y | Y | | | |
-| DELETE | /sandflies/name | Y | Y | | | |
 | GET | /sandflies/backup | Y | Y | | | |
 | POST | /sandflies/reload_all | Y | Y | | | |
 | GET | /savedviews | Y | Y | | | |
 | GET | /savedviews/:namespace | Y | Y | | | |
-| DELETE | /savedviews/:namespace/:name | Y | Y | | | |
 | POST | /savedviews | Y | Y | | | |
 | POST | /scan | Y | Y | Y | Y | Y |
 | POST | /scan/adhoc | Y | Y | Y | Y | Y |
@@ -704,8 +685,6 @@ Support applies regardless of vendor distribution (Yocto, Buildroot, custom BSPs
 | PUT | /schedule/pause/:id | Y | Y | | | |
 | PUT | /schedule/unpause/:id | Y | Y | | | |
 | POST | /schedule/run/:id | Y | Y | | | |
-| DELETE | /schedule | Y | Y | | | |
-| DELETE | /schedule/:id | Y | Y | | | |
 | POST | /sharedurl | Y | Y | | | |
 | GET | /sshhunter/summary | Y | Y | Y | Y | |
 | GET | /sshhunter/minisummary | Y | Y | Y | Y | |
