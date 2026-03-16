@@ -16,7 +16,7 @@ The Splunk app provides dashboards, reports, and search logic for analyzing data
 
 This includes Sandfly Security alarms, suspicious activity results, SSH Hunter data, host inventory, and Sandfly server audit and error logs. 
 
-Data retrieved by Sandfly Securitu can also be used by Splunk users to build searches, reports, anomaly detection models, and incident response workflows within Splunk.
+Data retrieved by Sandfly Security can also be used by Splunk users to build searches, reports, anomaly detection models, and incident response workflows within Splunk.
 
 The Splunk App is intended to surface Sandfly data directly inside Splunk so that Asset Owners and operational teams can view, analyze and action Sandfly Security results without requiring access to the Sandfly Security user interface.
 
