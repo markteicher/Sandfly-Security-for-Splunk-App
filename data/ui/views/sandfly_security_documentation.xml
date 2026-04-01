@@ -1,0 +1,214 @@
+<!--
+=============================================================================
+ default/data/ui/views/sandfly_security_documentation.xml
+ Sandfly Security for Splunk App
+ Documentation Hub (tile layout)
+=============================================================================
+-->
+<dashboard version="1.1" theme="light">
+  <label>📚 Sandfly Security Documentation Hub</label>
+
+  <row>
+    <panel>
+      <html>
+
+        <style>
+          .portal-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:22px;
+            margin-top:20px;
+          }
+          .portal-tile{
+            background:#ffffff;
+            border:1px solid #e5e5e5;
+            border-radius:8px;
+            padding:22px;
+            text-align:center;
+            transition:all .18s ease;
+          }
+          .portal-tile:hover{
+            box-shadow:0 4px 14px rgba(0,0,0,.18);
+            transform:translateY(-2px);
+          }
+          .portal-icon{font-size:34px;margin-bottom:10px;}
+          .portal-title{font-size:15px;font-weight:600;}
+          .portal-link{text-decoration:none;color:inherit;display:block;}
+        </style>
+
+        <div class="portal-grid">
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🌐</div>
+              <div class="portal-title">Sandfly Documentation Hub</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/getting-started" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">📘</div>
+              <div class="portal-title">Getting Started</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/quick-start-overview" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">⚡</div>
+              <div class="portal-title">Quick Start Overview</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/theory-of-operation" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🧠</div>
+              <div class="portal-title">Theory of Operation</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/installation-overview" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🛠️</div>
+              <div class="portal-title">Installation Overview</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/installation-requirements" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">📋</div>
+              <div class="portal-title">Installation Requirements</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/sandfly-scaling-guide" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">📈</div>
+              <div class="portal-title">Sandfly Scaling Guide</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/login-screen" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🔐</div>
+              <div class="portal-title">Login Screen</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/adding-credentials" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🗝️</div>
+              <div class="portal-title">Adding Credentials</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/adding-hosts" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🖥️</div>
+              <div class="portal-title">Adding Hosts</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/scan" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🔎</div>
+              <div class="portal-title">Scan Hosts</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/schedules" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🕒</div>
+              <div class="portal-title">Schedules</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/jump-hosts" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🌉</div>
+              <div class="portal-title">Jump Hosts</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/settings-section" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">⚙️</div>
+              <div class="portal-title">Settings</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/adding-users" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">👥</div>
+              <div class="portal-title">Adding Users</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/sso-configuration" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🔑</div>
+              <div class="portal-title">SSO Configuration</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/sandfly-api" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🔌</div>
+              <div class="portal-title">Sandfly API</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/api-endpoint-role-security-matrix" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🧾</div>
+              <div class="portal-title">API Endpoint Role Security Matrix</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/sandfly-forensic-keyword-list" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🧬</div>
+              <div class="portal-title">Forensic Keyword List</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/external-credential-provider-interface" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🏦</div>
+              <div class="portal-title">External Credential Provider Interface</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/hash-match-fields" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">#️⃣</div>
+              <div class="portal-title">Hash Match Fields</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/maintenance-scripts" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🔧</div>
+              <div class="portal-title">Maintenance Scripts</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://docs.sandflysecurity.com/docs/operational-faq" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">❓</div>
+              <div class="portal-title">Operational FAQ</div>
+            </div>
+          </a>
+
+          <a class="portal-link" href="https://help.sandflysecurity.com/" target="_blank">
+            <div class="portal-tile">
+              <div class="portal-icon">🆘</div>
+              <div class="portal-title">Sandfly Support</div>
+            </div>
+          </a>
+
+        </div>
+
+      </html>
+    </panel>
+  </row>
+</dashboard>
